@@ -78,7 +78,7 @@ int	key_hook(int keycode, canvas *canvas)
 	return (0);
 }
 
-int	render(canvas *canvas)
+void	ball_render(canvas *canvas)
 {
 	tuple	start_point = {0, canvas->height, 0, 1};
 	tuple 	move_vector = {1.5, 1.2, 0, 0};
@@ -95,7 +95,12 @@ int	render(canvas *canvas)
 		if (move_vector.y < 0)
 			break;
 		move_vector = operation_tuples(&move_vector, &gravity_vec, '+');
-	}	
+	}
+}
+
+int	render(canvas *canvas)
+{
+	ball_render(canvas);
 	mlx_put_image_to_window(canvas->mlx, canvas->win, canvas->img.img, 0, 0);
 	return (0);
 }

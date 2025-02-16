@@ -52,6 +52,11 @@ void	my_mlx_pixel_put(t_image *img, int x, int y, int color);
 int		rgb_to_int(t_color *color);
 t_color *colors_operarions(t_color *a, t_color *b, char operation);
 t_color	*int_to_rgb(int color);
-
+int		**new_matrix(int rows, int cols);
+void	print_matrix(int **matrix, int rows, int cols);
+void	free_matrix(int **matrix, int rows);
+int		**matrix_mul(int **a, int **b, int rows, int cols);
+int		**transpose_matrix(int **matrix, int rows, int cols);
+int		**matrix_operation(int **a, int **b, int rows, int cols, char operation);
 
 #endif
