@@ -58,5 +58,9 @@ void	free_matrix(int **matrix, int rows);
 int		**matrix_mul(int **a, int **b, int rows, int cols);
 int		**transpose_matrix(int **matrix, int rows, int cols);
 int		**matrix_operation(int **a, int **b, int rows, int cols, char operation);
+int		**submatrix(int **matrix, int rows, int cols, int row, int col);
+int		**inverse_matrix(int **matrix, int rows, int cols);
+float	cofactor(int **matrix, int rows, int cols, int row, int col);
+float	determinant(int **matrix, int rows);
 
 #endif
