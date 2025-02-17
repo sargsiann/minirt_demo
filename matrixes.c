@@ -1,17 +1,33 @@
 #include "minirt.h"
 
-int	**new_matrix(int rows, int cols)
+void	*bzero(void *s, size_t n)
 {
-	int	**matrix;
+	unsigned char	*ptr;
+	size_t	i;
+
+	ptr = s;
+	i = 0;
+	while (i < n)
+	{
+		ptr[i] = 0;
+		i++;
+	}
+	return (s);
+}
+
+float	**new_matrix(int rows, int cols)
+{
+	float	**matrix;
 	int	i;
 
-	matrix = malloc(sizeof(int *) * rows);
+	matrix = malloc(sizeof(float *) * rows);
 	if (!matrix)
 		exit(1);
 	i = 0;
 	while (i < rows)
 	{
-		matrix[i] = malloc(sizeof(int) * cols);
+		matrix[i] = malloc(sizeof(float) * cols);
+		bzero(matrix[i], sizeof(float) * cols);
 		if (!matrix[i])
 			exit(1);
 		i++;
@@ -19,7 +35,7 @@ int	**new_matrix(int rows, int cols)
 	return (matrix);
 }
 
-void	print_matrix(int **matrix, int rows, int cols)
+void	print_matrix(float **matrix, int rows, int cols)
 {
 	int	i;
 	int	j;
@@ -30,7 +46,7 @@ void	print_matrix(int **matrix, int rows, int cols)
 		j = 0;
 		while (j < cols)
 		{
-			printf("%d ", matrix[i][j]);
+			printf("%f ", matrix[i][j]);
 			j++;
 		}
 		printf("\n");
@@ -38,7 +54,7 @@ void	print_matrix(int **matrix, int rows, int cols)
 	}
 }
 
-void	free_matrix(int **matrix, int rows)
+void	free_matrix(float **matrix, int rows)
 {
 	int	i;
 
@@ -51,9 +67,9 @@ void	free_matrix(int **matrix, int rows)
 	free(matrix);
 }
 
-int	**matrix_mul(int **a, int **b, int rows, int cols)
+float	**matrix_mul(float **a, float **b, int rows, int cols)
 {
-	int	**new;
+	float	**new;
 	int	i;
 	int	j;
 	int	k;
@@ -79,9 +95,9 @@ int	**matrix_mul(int **a, int **b, int rows, int cols)
 	return (new);
 }
 
-int	**transpose_matrix(int **matrix, int rows, int cols)
+float	**transpose_matrix(float **matrix, int rows, int cols)
 {
-	int	**new;
+	float	**new;
 	int	i;
 	int	j;
 
@@ -100,9 +116,9 @@ int	**transpose_matrix(int **matrix, int rows, int cols)
 	return (new);
 }
 
-int	**matrix_operation(int **a, int **b, int rows, int cols, char operation)
+float	**matrix_operation(float **a, float **b, int rows, int cols, char operation)
 {
-	int	**new;
+	float	**new;
 	int	i;
 	int	j;
 

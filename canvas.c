@@ -98,9 +98,29 @@ void	ball_render(canvas *canvas)
 	}
 }
 
+void	clock_render(canvas *canvas)
+{
+	float **origin = new_matrix(4,1);
+	origin[0][0] = canvas->width/2 + 10;
+	origin[1][0] = canvas->height/2;
+	origin[2][0] = 0;
+	origin[3][0] = 1;
+	float s_x = origin[0][0];
+	float s_y = origin[1][0];
+	// printf("origin: %f %f\n", origin[0][0], origin[1][0]);
+	int i = 0;
+	while (1)
+	{
+		origin = rotation_x(origin, 180/12);
+		my_mlx_pixel_put(&canvas->img, origin[0][0], origin[1][0], 0x00FF00);
+		if (origin[0][0] == s_x && origin[1][0] == s_y)
+			break;
+	}
+}
+
 int	render(canvas *canvas)
 {
-	ball_render(canvas);
+	clock_render(canvas);
 	mlx_put_image_to_window(canvas->mlx, canvas->win, canvas->img.img, 0, 0);
 	return (0);
 }

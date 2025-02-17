@@ -52,15 +52,22 @@ void	my_mlx_pixel_put(t_image *img, int x, int y, int color);
 int		rgb_to_int(t_color *color);
 t_color *colors_operarions(t_color *a, t_color *b, char operation);
 t_color	*int_to_rgb(int color);
-int		**new_matrix(int rows, int cols);
-void	print_matrix(int **matrix, int rows, int cols);
-void	free_matrix(int **matrix, int rows);
-int		**matrix_mul(int **a, int **b, int rows, int cols);
-int		**transpose_matrix(int **matrix, int rows, int cols);
-int		**matrix_operation(int **a, int **b, int rows, int cols, char operation);
-int		**submatrix(int **matrix, int rows, int cols, int row, int col);
-int		**inverse_matrix(int **matrix, int rows, int cols);
-float	cofactor(int **matrix, int rows, int cols, int row, int col);
-float	determinant(int **matrix, int rows);
+float	**new_matrix(int rows, int cols);
+void	print_matrix(float **matrix, int rows, int cols);
+void	free_matrix(float **matrix, int rows);
+float	**matrix_mul(float **a, float **b, int rows, int cols);
+float	**transpose_matrix(float **matrix, int rows, int cols);
+float	**matrix_operation(float **a, float **b, int rows, int cols, char operation);
+float	**submatrix(float **matrix, int rows, int cols, int row, int col);
+float	**inverse_matrix(float **matrix, int rows, int cols);
+float	cofactor(float **matrix, int rows, int cols, int row, int col);
+float	determinant(float **matrix, int rows);
+float	**translation(float **matrix, float x, float y, float z);
+float	**scale(float **matrix, float x, float y, float z);
+float	**rotation_x(float **matrix, float rad);
+float	**rotation_y(float **matrix, float rad);
+float	**rotation_z(float **matrix, float rad);
+float	**shearing(float **matrix, float xy, float xz, float yx, float yz, float zx, float zy);
+
 
 #endif

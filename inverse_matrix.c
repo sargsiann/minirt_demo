@@ -1,8 +1,17 @@
 #include "minirt.h"
 
-float	cofactor(int **matrix, int rows, int cols, int row, int col)
+// ADDING MATRIX OK
+// SUBSTRACTING MATRIX OK
+// MULTIPLYING MATRIX OK
+// TRANSPOSING MATRIX OK
+// FINDING SUBMATRIX OK
+// FINDING DETERMINANT OK
+// FINDING COFACTOR OK
+// FINDING INVERSE OK
+
+float	cofactor(float **matrix, int rows, int cols, int row, int col)
 {
-	int	**sub;
+	float	**sub;
 	int	sign;
 	float	det;
 
@@ -13,19 +22,18 @@ float	cofactor(int **matrix, int rows, int cols, int row, int col)
 	return (det);
 }
 
-float	determinant(int **matrix, int rows)
+float	determinant(float **matrix, int rows)
 {
 	float	det;
-	int		**sub;
+	float	**sub;
 	int		i;
-	int		j;
 	int		sign;
 
-	if (rows == 1)
-		return (matrix[0][0]);
+	if (rows == 2)
+		return (matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]);
 	det = 0;
-	sign = 1;
 	i = -1;
+	sign = 1;
 	while (++i < rows)
 	{
 		sub = submatrix(matrix, rows, rows, 0, i);
@@ -36,13 +44,13 @@ float	determinant(int **matrix, int rows)
 	return (det);
 }
 
-int	**submatrix(int **matrix, int rows, int cols, int row, int col)
+float	**submatrix(float **matrix, int rows, int cols, int row, int col)
 {
-	int	**sub;
-	int sub_i;
-	int i;
-	int j;
-	int sub_j;
+	float	**sub;
+	int		sub_i;
+	int		i;
+	int		j;
+	int		sub_j;
 
 	sub = new_matrix(rows - 1, cols - 1);
 	sub_i = -1;
@@ -67,28 +75,37 @@ int	**submatrix(int **matrix, int rows, int cols, int row, int col)
 	return (sub);
 }
 
-int **inverse_matrix(int **matrix, int rows, int cols)
+float **inverse_matrix(float **matrix, int rows, int cols)
 {
-	int	**inverse;
+	float	**inverse;
 	int	i;
 	int	j;
 
-	inverse = (int **)malloc(sizeof(int *) * 4);
-	if (determinant(matrix, rows) <= 0)
-		return (NULL);
-	// inverse = new_matrix(rows, cols);
-	// i = -1;
-	// while (++i < rows)
-	// {
-	// 	j = -1;
-	// 	while (++j < cols)
-	// 		inverse[i][j] = cofactor(matrix, rows, cols, i, j);
-	// }
-	// inverse = transpose_matrix(inverse, rows, cols);
-	// i = -1;
-	// j = -1;
-	// while (++i < rows)
-	// 	while (++j < cols)
-	// 		inverse[i][j] /= determinant(matrix, rows);
-	// return (inverse);
+	inverse = new_matrix(rows, cols);
+	if (!inverse)
+		exit(1);
+	i = 0;
+	while (i < rows)
+	{
+		j = 0;
+		while (j < cols)
+		{
+			inverse[i][j] = cofactor(matrix, rows, cols, i, j);
+			j++;
+		}
+		i++;
+	}
+	inverse = transpose_matrix(inverse, rows, cols);
+	i = 0;
+	while (i < rows)
+	{
+		j = 0;
+		while (j < cols)
+		{
+			inverse[i][j] /= determinant(matrix, rows);
+			j++;
+		}
+		i++;
+	}
+	return (inverse);
 }
