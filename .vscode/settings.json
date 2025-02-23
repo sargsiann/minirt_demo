@@ -1,6 +1,7 @@
 {
 	"files.associations": {
 		"bit": "cpp",
-		"functional": "c"
+		"functional": "c",
+		"minirt.h": "c"
 	}
 }
