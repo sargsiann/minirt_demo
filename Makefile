@@ -6,7 +6,7 @@ CFLAGS = #-Wall -Wextra -Werror
 
 MLX_COMP_FLAGS = $(CFLAGS) -I/usr/include -Imlx_linux -O3
 
-MLX_LNK_FLAGS = -Lmlx_linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz
+MLX_LNK_FLAGS = -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz 
 
 SRCS = $(wildcard *.c)
 
@@ -20,8 +20,8 @@ all : $(NAME)
 $(NAME) : Makefile minirt.h $(OBJS)
 	$(CC) $(OBJS) $(MLX_LNK_FLAGS) -o minirt
 
-clean : $(OBJS)
-	rm -rf $(0BJS)
+clean : 
+	rm -rf $(OBJS)
 
 fclean : clean
 	rm -rf minirt

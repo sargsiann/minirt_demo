@@ -2,6 +2,7 @@
 	"files.associations": {
 		"bit": "cpp",
 		"functional": "c",
-		"minirt.h": "c"
+		"minirt.h": "c",
+		"mlx_int.h": "c"
 	}
 }

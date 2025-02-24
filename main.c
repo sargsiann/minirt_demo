@@ -1,27 +1,5 @@
 #include "minirt.h"
 
-// typedef struct s_projectile
-// {
-// 	tuple	*pos;
-// 	tuple	*velocity;
-// } t_projectile;
-
-// typedef struct s_env
-// {
-// 	tuple	*gravity;
-// 	tuple	*wind;	
-// } t_env;
-
-// t_projectile tick(t_projectile p, t_env e)
-// {
-// 	p.pos = (tuple *)(tuples_operation(p.pos,p.velocity,ADD));
-// 	p.velocity = (tuple *)(tuples_operation(p.velocity,
-// 		(tuple *)(tuples_operation(e.gravity,e.wind,ADD)),ADD));
-// 	print_tuple(p.pos); 
-// 	return (p);
-// }
-
-
 int main()
 {
 	// t_projectile p;
@@ -50,4 +28,7 @@ int main()
 	// res = tuples_operation(&a, &b, VEC_MUL);
 	// printf("x: %f, y: %f, z: %f\n", res->x, res->y, res->z);
 	// free(res);
+
+	t_canvas *canvas;
+	init_canvas(canvas);
 }
