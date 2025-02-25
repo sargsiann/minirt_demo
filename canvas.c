@@ -1,7 +1,4 @@
 #include "minirt.h"
-
-
-/* EXERCISE 1 AND 0
 void	put_square(int x, int y, t_image *image, int color)
 {
 	int i = 0;
@@ -17,6 +14,9 @@ void	put_square(int x, int y, t_image *image, int color)
 		i++;
 	}
 }
+
+/* EXERCISE 1 AND 0
+
 EXERCISE 0
 
 t_projectile tick(t_projectile p, t_env e)
@@ -43,7 +43,6 @@ void	render(t_canvas *canvas)
 	}
 }
 */
-
 
 
 int	close(int status)
