@@ -125,6 +125,35 @@ int loop_hook(void *param)
 	mlx_put_image_to_window(canvas->mlx, canvas->win, canvas->image->img_ptr, 0, 0);
 }
 
+void	render(t_canvas *canvas)
+{
+	float	**cen;
+
+	cen = new_matrix(4,1);
+	cen[0][0] = WIDTH/2;
+	cen[1][0] = HEIGHT/2;
+	cen[2][0] = 0;
+	cen[3][0] = 1;
+
+	float	**pos;
+
+	pos = new_matrix(4,1);
+	pos[0][0] = 10;
+	pos[1][0] = 10;
+	pos[2][0] = 0;
+	pos[3][0] = 1;
+	put_square(cen[0][0],cen[1][0],canvas->image,0xff0000);
+
+	float	**r = new_rotation_z(PI/6);
+	int i = 0;
+	while (i<12)
+	{
+		pos = matrix_mul(r,pos,4,1);
+		put_square(pos[0][0] * 10 + WIDTH/2,pos[1][0] * 10 + HEIGHT/2,canvas->image,0x0000ff);	
+		i++;
+	}
+}
+
 void	init_canvas(t_canvas *canvas)
 {
 	canvas = malloc(sizeof(t_canvas));
@@ -133,6 +162,7 @@ void	init_canvas(t_canvas *canvas)
 	canvas->mlx = mlx_init();
 	canvas->win = mlx_new_window(canvas->mlx, 1080, 720, "Minirt");
 	init_image(&canvas->image, canvas->mlx);
+	render(canvas);
 	mlx_put_image_to_window(canvas->mlx, canvas->win, canvas->image->img_ptr, 0, 0);
 	mlx_hook(canvas->win,17,0,close,NULL);
 	mlx_mouse_hook(canvas->win,mouse_hook,canvas);

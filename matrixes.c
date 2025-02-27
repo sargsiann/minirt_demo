@@ -43,9 +43,9 @@ float	**matrix_mul(float **a, float **b,char row,char col)
 		j = -1;
 		while (++j < col)
 		{
-			k = -1;
 			sum = 0;
-			while (++k < col)
+			k = -1;
+			while (++k < row)
 				sum += a[i][k] * b[k][j];
 			res[i][j] = sum;
 		}
@@ -77,11 +77,11 @@ float	**tuple_to_mx(tuple *a)
 {
 	float	**res;
 
-	res = new_matrix(1,4);
+	res = new_matrix(4,1);
 	res[0][0] = a->x;
-	res[0][1] = a->y;
-	res[0][2] = a->z;
-	res[0][3] = a->id;
+	res[1][0] = a->y;
+	res[2][0] = a->z;
+	res[3][0] = a->id;
 	return (res);
 }
 
@@ -158,7 +158,7 @@ float	**inverse(float **a, char rows, char cols)
 	char	j;
 
 	det = determinant(a, rows, cols);
-	if (det == 0)
+	if (det <= 0)
 		return (NULL);
 	res = new_matrix(rows, cols);
 	i = -1;

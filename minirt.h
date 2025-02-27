@@ -2,6 +2,7 @@
 # define MINIRT_H
 
 # define EPSILON 0.0001
+# define PI 3.14159265359
 
 # define WIDTH 1080
 # define HEIGHT 720
@@ -15,7 +16,7 @@
 # define SCL_MUL 8
 # define MAG 9
 # define NORM 10
-# define ESC 653074
+# define ESC 65307
 
 # include "mlx.h"
 # include <stdio.h>
@@ -88,7 +89,6 @@ void	put_square(int x, int y, t_image *image, int color);
 void	print_matrix(float **m, int row, int col);
 float	**new_matrix(int row, int col);
 float	**matrix_mul(float **a, float **b,char row,char col);
-// float	**transpose(float **a, char row, char col);
 float	**tuple_to_mx(tuple *a);
 void	transpose(float **a, char row, char col);
 tuple	*mx_to_tuple(float **a);
@@ -97,6 +97,17 @@ float	determinant(float **a, char rows, char cols);
 float	**inverse(float **a, char rows, char cols);
 float	cofactor(float **a, char rows, char cols, char r, char c);
 void	free_matrix(float **m, int row);
+
+// TRANSFORMATIONS
+
+float	**new_translation(float x, float y, float z);
+float	**new_scale(float x, float y, float z);
+float	**new_rotation_x(float rad);
+float	**new_rotation_y(float rad);
+float	**new_rotation_z(float rad);
+float	**new_shearing(float xy, float xz, float yx, float yz, float zx, float zy);
+
+
 
 
 #endif

@@ -74,13 +74,26 @@ int main()
 
 	// print_matrix(matrix_mul(a, b, 3, 3), 3, 3);
 
-	float **a = new_matrix(4,4);
+	// float **a = new_matrix(3,3);
 
-	a[0][0] = -5;a[0][1] = 2;a[0][2] = 6;a[0][3] = -8;
-	a[1][0] = 1;a[1][1] = -5;a[1][2] = 1;a[1][3] = 8;
-	a[2][0] = 7;a[2][1] = 7;a[2][2] = -6;a[2][3] = -7;
-	a[3][0] = 1;a[3][1] = -3;a[3][2] = 7;a[3][3] = 4;
+	// a[0][0] = -5;a[0][1] = 2;a[0][2] = 6;
+	// a[1][0] = 1;a[1][1] = -5;a[1][2] = 1;	
+	// a[2][0] = 7;a[2][1] = 7;a[2][2] = -6;
 
-	print_matrix(inverse(a, 4, 4), 4, 4);
+	// print_matrix(inverse(a, 3, 3), 3, 3);
+
+	// tuple *a = point(1,2,3);
+	
+	// float **b = new_translation(11, -11, 11);
+	// // print_matrix(b, 4, 4);
+	// float **c = tuple_to_mx(a);
+	// // print_matrix(c, 4, 1);
+	// float **d = matrix_mul(b, c, 4, 1);
+	// // print_matrix(d,4,1);
+	// return (0);
+
+	t_canvas *c;
+
+	init_canvas(c);
 	return (0);
 }
