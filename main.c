@@ -92,8 +92,29 @@ int main()
 	// // print_matrix(d,4,1);
 	// return (0);
 
-	t_canvas *c;
+	// t_canvas *c;
 
-	init_canvas(c);
+	// init_canvas(c);
+	
+	// t_ray *r = new_ray(point(1,2,3), vector(0,1,0));
+	// tuple *p = position(r, 3.5);
+	// print_tuple(p);
+	
+	// t_sphere *s1 = malloc(sizeof(t_sphere));
+	// s1->center = point(0,0,0);
+	// s1->r = 1;
+	// s1->id = 1;
+
+	// t_sphere *s2 = malloc(sizeof(t_sphere));
+	// s2->center = point(0,0,0);
+	// s2->r = 1;
+	// s2->id = 2;
+
+	// t_ray *r = new_ray(point(0,0,-5), vector(0,0,1));
+	// t_intersect *i1 = intersect(r, s1);
+	// t_intersect *i2 = intersect(r, s2);
+
+	// addIntersection(&i1, i2);
+	// print_intersection(i1);
 	return (0);
 }

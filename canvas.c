@@ -134,7 +134,6 @@ void	render(t_canvas *canvas)
 	cen[1][0] = HEIGHT/2;
 	cen[2][0] = 0;
 	cen[3][0] = 1;
-
 	float	**pos;
 
 	pos = new_matrix(4,1);
@@ -144,9 +143,9 @@ void	render(t_canvas *canvas)
 	pos[3][0] = 1;
 	put_square(cen[0][0],cen[1][0],canvas->image,0xff0000);
 
-	float	**r = new_rotation_z(PI/6);
+	float	**r = new_rotation_z(PI/180);
 	int i = 0;
-	while (i<12)
+	while (i<360)
 	{
 		pos = matrix_mul(r,pos,4,1);
 		put_square(pos[0][0] * 10 + WIDTH/2,pos[1][0] * 10 + HEIGHT/2,canvas->image,0x0000ff);	

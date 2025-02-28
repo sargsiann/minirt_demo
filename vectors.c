@@ -35,15 +35,15 @@ void *tuple_operation(tuple *t1, int operation, float scalar)
 	}
 	if (operation == MUL)
 	{
-		res->x *= scalar;
-		res->y *= scalar;
-		res->z *= scalar;
+		res->x = t1->x * scalar;
+		res->y = t1->y * scalar;
+		res->z = t1->z * scalar;
 	}
 	if (operation == DIV)
 	{
-		res->x /= scalar;
-		res->y /= scalar;
-		res->z /= scalar;
+		res->x = t1->x / scalar;
+		res->y = t1->y / scalar;
+		res->z = t1->z / scalar;
 	}
 	if (operation == NORM)
 	{
@@ -62,7 +62,7 @@ void	*tuples_operation(tuple *t1, tuple *t2, int operation)
 	fl_res = malloc(sizeof(float));
 	if (operation == SCL_MUL)
 	{
-		*fl_res = t1->x * t2->x + t1->z * t2->z + t1->z * t2->z;
+		*fl_res = t1->x * t2->x + t1->y * t2->y + t1->z * t2->z;
 		return  (fl_res);
 	}
 	res = malloc(sizeof(tuple));

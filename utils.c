@@ -10,6 +10,18 @@ void	free_matrix(float **m, int row)
 	free(m);
 }
 
+void	print_intersection(t_intersect *i)
+{
+	while (i)
+	{
+		printf("%d\n",((t_sphere *)(i->object))->id);
+		for (int j = 0; j < i->count; j++)
+			printf("time: %.2f\n", i->times[j]);
+		printf("--------------------\n");
+		i = i->next;
+	}
+}
+
 void	print_matrix(float **m, int row, int col)
 {
 	int	i;

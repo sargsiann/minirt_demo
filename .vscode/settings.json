@@ -3,6 +3,8 @@
 		"bit": "cpp",
 		"functional": "c",
 		"minirt.h": "c",
-		"mlx_int.h": "c"
+		"mlx_int.h": "c",
+		"lib.h": "c",
+		"random": "c"
 	}
 }

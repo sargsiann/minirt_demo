@@ -33,6 +33,30 @@ typedef struct s_tuple
 	short	id;
 }	tuple;
 
+typedef struct s_sphere
+{
+	tuple	*center;
+	float	r;
+	char	id;
+}	t_sphere;
+
+typedef struct s_ray
+{
+	tuple	*origin;
+	tuple	*direction;
+}	t_ray;
+
+
+
+
+typedef	struct s_intersect
+{
+	int		count;
+	float	*times;
+	void	*object;
+	struct s_intersect	*next;
+}	t_intersect;
+
 typedef struct s_color
 {
 	unsigned char r;
@@ -57,25 +81,32 @@ typedef struct s_canvas
 	t_image	*image;
 } t_canvas;
 
-typedef struct s_projectile
-{
-	tuple	*pos;
-	tuple	*velocity;
-} t_projectile;
+// typedef struct s_projectile
+// {
+// 	tuple	*pos;
+// 	tuple	*velocity;
+// } t_projectile;
 
-typedef struct s_env
-{
-	tuple	*gravity;
-	tuple	*wind;	
-} t_env;
+// typedef struct s_env
+// {
+// 	tuple	*gravity;
+// 	tuple	*wind;	
+// } t_env;
+
+// UTILS
+
+void	free_matrix(float **m, int row);
+void	print_intersection(t_intersect *i);
+void	print_matrix(float **m, int row, int col);
+void	print_tuple(tuple *t);
+int		is_eq(float a, float b);
+void	print_tuple(tuple *t);
 
 // TUPLES
-int		is_eq(float a, float b);
 void	*tuples_operation(tuple *t1, tuple *t2, int operation);
 void	*tuple_operation(tuple *t1, int operation, float scalar);
 tuple	*point(float x, float y, float z);
 tuple	*vector(float x, float y, float z);
-void	print_tuple(tuple *t);
 
 // CANVAS
 void	init_canvas(t_canvas *canvas);
@@ -86,7 +117,6 @@ void	put_square(int x, int y, t_image *image, int color);
 
 // MATRIXES
 
-void	print_matrix(float **m, int row, int col);
 float	**new_matrix(int row, int col);
 float	**matrix_mul(float **a, float **b,char row,char col);
 float	**tuple_to_mx(tuple *a);
@@ -107,7 +137,11 @@ float	**new_rotation_y(float rad);
 float	**new_rotation_z(float rad);
 float	**new_shearing(float xy, float xz, float yx, float yz, float zx, float zy);
 
+// RAY_CASTS
 
-
+t_ray		*new_ray(tuple *o,tuple *d);
+tuple		*position(t_ray *r,float t);
+t_intersect	*intersect(t_ray *r,t_sphere *s);
+void		addIntersection(t_intersect **head, t_intersect *node);
 
 #endif
