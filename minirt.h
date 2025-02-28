@@ -143,5 +143,7 @@ t_ray		*new_ray(tuple *o,tuple *d);
 tuple		*position(t_ray *r,float t);
 t_intersect	*intersect(t_ray *r,t_sphere *s);
 void		addIntersection(t_intersect **head, t_intersect *node);
+t_intersect	*find_hit(t_intersect *head);
+float		findMaxFloat(float *a, int count);
 
 #endif

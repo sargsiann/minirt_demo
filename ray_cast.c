@@ -95,7 +95,39 @@ t_intersect	*intersect(t_ray	*r,t_sphere	*o)
 	return (inter);
 }
 
-t_intersect	find_hit(t_intersect **head)
+float	findMaxFloat(float *a, int count)
 {
-	
+	float	max;
+	int	i;
+
+	i = -1;
+	max = a[0];
+	while (++i < count)
+	{
+		if (a[i] > max)
+			max = a[i];
+	}
+	return (max);
+}
+
+
+t_intersect	*find_hit(t_intersect *head)
+{
+	t_intersect	*max;
+	float	max_float;
+	float	val;
+
+	max = head;
+	head = head->next;
+	while (head)
+	{
+		val = findMaxFloat(head->times, head->count);
+		if (val < max_float)
+		{
+			max = head;
+			max_float = val;
+		}
+		head = head->next;
+	}
+	return (max);
 }
