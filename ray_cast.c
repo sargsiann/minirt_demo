@@ -59,10 +59,11 @@ void	addIntersection(t_intersect **head, t_intersect *node)
 
 t_intersect	*intersect(t_ray	*r,t_sphere	*o)
 {
+	tuple *oc = tuples_operation(r->origin, o->center, SUB);
 
 	float a = *(float *)(tuples_operation(r->direction, r->direction, SCL_MUL));
-	float b = 2 * *(float *)(tuples_operation(r->direction, r->origin, SCL_MUL));
-	float c = *(float *)(tuples_operation(r->origin, r->origin, SCL_MUL)) - 1;
+	float b = 2 * *(float *)(tuples_operation(r->direction, oc, SCL_MUL));
+	float c = *(float *)(tuples_operation(oc,oc, SCL_MUL)) - 1;
 
 	float discriminant = b * b - 4 * a * c;
 	t_intersect	*inter;
@@ -95,39 +96,35 @@ t_intersect	*intersect(t_ray	*r,t_sphere	*o)
 	return (inter);
 }
 
-float	findMaxFloat(float *a, int count)
+float	findMinFloat(float *a, int count)
 {
-	float	max;
-	int	i;
-
-	i = -1;
-	max = a[0];
-	while (++i < count)
+	float min = a[0];
+	for (int i = 1; i < count; i++)
 	{
-		if (a[i] > max)
-			max = a[i];
+		if (a[i] < min)
+			min = a[i];
 	}
-	return (max);
+	return (min);
 }
 
 
 t_intersect	*find_hit(t_intersect *head)
 {
-	t_intersect	*max;
-	float	max_float;
+	t_intersect	*min;
+	float		min_float;
 	float	val;
 
-	max = head;
-	head = head->next;
+	min = head;
+	min_float = findMinFloat(head->times, head->count);
 	while (head)
 	{
-		val = findMaxFloat(head->times, head->count);
-		if (val < max_float)
+		val = findMinFloat(head->times, head->count);
+		if (val < min_float)
 		{
-			max = head;
-			max_float = val;
+			min = head;
+			min_float = val;
 		}
 		head = head->next;
 	}
-	return (max);
+	return (min);
 }

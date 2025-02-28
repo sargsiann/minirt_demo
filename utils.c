@@ -12,12 +12,17 @@ void	free_matrix(float **m, int row)
 
 void	print_intersection(t_intersect *i)
 {
+	printf("%d\n",((t_sphere *)(i->object))->id);
+	for (int j = 0; j < i->count; j++)
+		printf("time: %.2f\n", i->times[j]);
+	printf("--------------------\n");
+}
+
+void	print_intersections(t_intersect *i)
+{
 	while (i)
 	{
-		printf("%d\n",((t_sphere *)(i->object))->id);
-		for (int j = 0; j < i->count; j++)
-			printf("time: %.2f\n", i->times[j]);
-		printf("--------------------\n");
+		print_intersection(i);
 		i = i->next;
 	}
 }

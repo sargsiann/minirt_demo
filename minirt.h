@@ -97,6 +97,7 @@ typedef struct s_canvas
 
 void	free_matrix(float **m, int row);
 void	print_intersection(t_intersect *i);
+void	print_intersections(t_intersect *i);
 void	print_matrix(float **m, int row, int col);
 void	print_tuple(tuple *t);
 int		is_eq(float a, float b);
@@ -144,6 +145,6 @@ tuple		*position(t_ray *r,float t);
 t_intersect	*intersect(t_ray *r,t_sphere *s);
 void		addIntersection(t_intersect **head, t_intersect *node);
 t_intersect	*find_hit(t_intersect *head);
-float		findMaxFloat(float *a, int count);
+float		findMinFloat(float *a, int count);
 
 #endif
