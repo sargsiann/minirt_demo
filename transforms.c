@@ -55,6 +55,18 @@ float	**new_rotation_y(float rad)
 	return (rotation);
 }
 
+float	**new_identity(void)
+{
+	float **identity;
+
+	identity = new_matrix(4,4);
+	identity[0][0] = 1;
+	identity[1][1] = 1;
+	identity[2][2] = 1;
+	identity[3][3] = 1;
+	return (identity);
+}
+
 float	**new_rotation_z(float rad)
 {
 	float **rotation;

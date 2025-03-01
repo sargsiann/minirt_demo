@@ -100,35 +100,57 @@ int main()
 	// tuple *p = position(r, 3.5);
 	// print_tuple(p);
 	
-	t_sphere *s1 = malloc(sizeof(t_sphere));
-	s1->center = point(0,0,4);
-	s1->r = 1;
-	s1->id = 1;
+	// t_sphere *s1 = malloc(sizeof(t_sphere));
+	// s1->center = point(0,0,0);
+	// s1->r = 1;
+	// s1->id = 1;
 
-	t_sphere *s2 = malloc(sizeof(t_sphere));
-	s2->center = point(0,0,2);
-	s2->r = 1;
-	s2->id = 2;
-
-
-	t_sphere *s3 = malloc(sizeof(t_sphere));
-	s3->center = point(0,0,1);
-	s3->r = 1;
-	s3->id = 3;
+	// t_sphere *s2 = malloc(sizeof(t_sphere));
+	// s2->center = point(0,0,0);
+	// s2->r = 1;
+	// s2->id = 2;
 
 
-	t_ray *r = new_ray(point(0,0,-5), vector(0,0,1));
-	t_intersect *i1 = intersect(r, s1);
-	t_intersect *i2 = intersect(r, s2);
-	t_intersect *i3 = intersect(r, s3);
+	// t_sphere *s3 = malloc(sizeof(t_sphere));
+	// s3->center = point(0,0,0);
+	// s3->r = 1;
+	// s3->id = 3;
 
 
-	addIntersection(&i1, i2);
-	addIntersection(&i1, i3);
+	// t_ray *r = new_ray(point(0,0,-5), vector(0,0,1));
+	// t_intersect *i1 = intersect(r, s1);
+	// t_intersect *i2 = intersect(r, s2);
+	// t_intersect *i3 = intersect(r, s3);
 
-	print_intersections(i1);
+
+	// addIntersection(&i1, i2);
+	// addIntersection(&i1, i3);
+
+	// print_intersections(i1);
 	
-	t_intersect *i = find_hit(i1);
-	print_intersection(i);
+	// t_intersect *i = find_hit(i1);
+	// print_intersection(i);
+
+	// t_ray *r = new_ray(point(0,0,-5), vector(0,0,1));
+	// float	**rot = new_rotation_x(PI/12);
+	// t_ray *r2 = ray_operation(r, rot, ROT);
+	// print_tuple(r2->origin);
+	// print_tuple(r2->direction);
+
+	// t_sphere *s = malloc(sizeof(t_sphere));
+	// s->center = point(0,0,0);
+	// s->r = 1;
+	// s->id = 1;
+	// s->transform = new_translation(2,3,4);
+	// s->t_type = TRSL;
+	// t_ray *r = new_ray(point(0,0,-5), vector(0,0,1));
+	// t_intersect *i = intersect(r, s);
+
+	// // print_intersection(i);
+	
+	t_canvas	*canvas;
+
+	init_canvas(canvas);
+	
 	return (0);
 }

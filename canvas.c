@@ -114,7 +114,7 @@ void	init_image(t_image **img, void *mlx)
 	*img = malloc(sizeof(t_image));
 	if (!img)
 		exit(1);
-	(*img)->img_ptr = mlx_new_image(mlx, 1080, 720);
+	(*img)->img_ptr = mlx_new_image(mlx,1080, 720);
 	(*img)->addres = mlx_get_data_addr((*img)->img_ptr,
 		&(*img)->bpp, &(*img)->line, &(*img)->endian);
 }
@@ -125,33 +125,85 @@ int loop_hook(void *param)
 	mlx_put_image_to_window(canvas->mlx, canvas->win, canvas->image->img_ptr, 0, 0);
 }
 
+tuple	*canvas_cors(tuple *p)
+{
+	return point(p->x + WIDTH/2,HEIGHT/2 - p->y,p->z);
+}
+
 void	render(t_canvas *canvas)
 {
-	float	**cen;
+	t_ray *r;
+	t_intersect	*it;
+	t_sphere	*sp;
+	tuple	*pos;
+	float	w_size;
+	float	w_y;
+	float	w_x;
 
-	cen = new_matrix(4,1);
-	cen[0][0] = WIDTH/2;
-	cen[1][0] = HEIGHT/2;
-	cen[2][0] = 0;
-	cen[3][0] = 1;
-	float	**pos;
-
-	pos = new_matrix(4,1);
-	pos[0][0] = 10;
-	pos[1][0] = 10;
-	pos[2][0] = 0;
-	pos[3][0] = 1;
-	put_square(cen[0][0],cen[1][0],canvas->image,0xff0000);
-
-	float	**r = new_rotation_z(PI/180);
-	int i = 0;
-	while (i<360)
+	w_size = 7;
+	sp = new_sphere(1);
+	sp->transform = new_scale(0.5,0.5,0.5);
+	sp->t_type = SCALE;
+	float px_size = 7.0/100; // PROJECTING CANVAS POSITION TO REAL LIFE POSITION
+	for (int i = 0;i < 100;i++)
 	{
-		pos = matrix_mul(r,pos,4,1);
-		put_square(pos[0][0] * 10 + WIDTH/2,pos[1][0] * 10 + HEIGHT/2,canvas->image,0x0000ff);	
-		i++;
+		w_y = 3.5 - px_size * i; // PROJECTING CANVAS POSITION TO REAL LIFE POSITION
+		for (int j = 0;j < 100;j++)
+		{
+			w_x = px_size * j - 3.5;
+			pos = point(w_x,w_y,10); // GETTING POINT OF IN WALL BY REAL LIFE SIZES
+			r = new_ray(point(0,0,-5),tuple_operation(
+				vector(pos->x,pos->y,pos->z - (-5)),NORM,0)); // CREATING RAY FROM ORIGIN TO WALL NORMALIZING VECTOR
+			it = intersect(r,sp);
+			if (it->count > 0) // IF WE HAVE INTERSECTION IN THAT CANVAS POINT CASTED TO REAL-WORLD WE PUT PIXEL
+				my_pixel_put(i,j,canvas->image,0xff0000);
+		}	
 	}
 }
+
+// void	render(t_canvas *canvas)
+// {
+// 	float	**cen;
+
+// 	cen = new_matrix(4,1);
+// 	cen[0][0] = WIDTH/2;
+// 	cen[1][0] = HEIGHT/2;
+// 	cen[2][0] = 0;
+// 	cen[3][0] = 1;
+// 	float	**pos;
+
+// 	pos = new_matrix(4,1);
+// 	pos[0][0] = 10;
+// 	pos[1][0] = 10;
+// 	pos[2][0] = 0;
+// 	pos[3][0] = 1;
+// 	put_square(cen[0][0],cen[1][0],canvas->image,0xff0000);
+
+// 	float	**r = new_rotation_z(PI/180);
+// 	int i = 0;
+// 	while (i< 360)
+// 	{
+// 		pos = matrix_mul(r,pos,4,1);
+// 		// tuple *print = canvas_cors(pos)
+// 		put_square(pos[0][0] * 10 + WIDTH/2,HEIGHT/2 - pos[1][0] * 10,canvas->image,0x0000ff);	
+// 		i++;
+// 	}
+// }
+
+
+
+// void	render(t_canvas *canvas)
+// {
+// 	t_ray	*ray;
+// 	tuple	*origin;
+// 	tuple	*direction;
+// 	char	z;
+// 	char	size;
+
+// 	origin = point(0,0,-5);
+// 	z = 10;
+// 	size = 7;
+// }
 
 void	init_canvas(t_canvas *canvas)
 {
@@ -159,7 +211,7 @@ void	init_canvas(t_canvas *canvas)
 	if (!canvas)
 		exit(1);
 	canvas->mlx = mlx_init();
-	canvas->win = mlx_new_window(canvas->mlx, 1080, 720, "Minirt");
+	canvas->win = mlx_new_window(canvas->mlx, 1080,720, "Minirt");
 	init_image(&canvas->image, canvas->mlx);
 	render(canvas);
 	mlx_put_image_to_window(canvas->mlx, canvas->win, canvas->image->img_ptr, 0, 0);

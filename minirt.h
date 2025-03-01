@@ -4,8 +4,8 @@
 # define EPSILON 0.0001
 # define PI 3.14159265359
 
-# define WIDTH 1080
-# define HEIGHT 720
+# define WIDTH 500
+# define HEIGHT 500
 
 # define NEG 0
 # define ADD 1
@@ -16,6 +16,10 @@
 # define SCL_MUL 8
 # define MAG 9
 # define NORM 10
+# define TRSL 11
+# define SCALE 12
+# define ROT 13
+# define IDM 14
 # define ESC 65307
 
 # include "mlx.h"
@@ -36,6 +40,8 @@ typedef struct s_tuple
 typedef struct s_sphere
 {
 	tuple	*center;
+	float	**transform;
+	char	t_type;
 	float	r;
 	char	id;
 }	t_sphere;
@@ -45,8 +51,6 @@ typedef struct s_ray
 	tuple	*origin;
 	tuple	*direction;
 }	t_ray;
-
-
 
 
 typedef	struct s_intersect
@@ -100,6 +104,7 @@ void	print_intersection(t_intersect *i);
 void	print_intersections(t_intersect *i);
 void	print_matrix(float **m, int row, int col);
 void	print_tuple(tuple *t);
+void	print_ray(t_ray *r);
 int		is_eq(float a, float b);
 void	print_tuple(tuple *t);
 
@@ -131,6 +136,7 @@ void	free_matrix(float **m, int row);
 
 // TRANSFORMATIONS
 
+float	**new_identity(void);
 float	**new_translation(float x, float y, float z);
 float	**new_scale(float x, float y, float z);
 float	**new_rotation_x(float rad);
@@ -139,12 +145,16 @@ float	**new_rotation_z(float rad);
 float	**new_shearing(float xy, float xz, float yx, float yz, float zx, float zy);
 
 // RAY_CASTS
-
+t_sphere	*new_sphere(int id);
 t_ray		*new_ray(tuple *o,tuple *d);
 tuple		*position(t_ray *r,float t);
 t_intersect	*intersect(t_ray *r,t_sphere *s);
 void		addIntersection(t_intersect **head, t_intersect *node);
 t_intersect	*find_hit(t_intersect *head);
 float		findMinFloat(float *a, int count);
+t_ray		*ray_operation(t_ray *r, float **matrix,char op);
+void		set_transform(t_sphere **s,float **t,char type);
+
+// LIGHTS
 
 #endif

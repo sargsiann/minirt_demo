@@ -91,9 +91,9 @@ tuple	*mx_to_tuple(float **a)
 
 	res = malloc(sizeof(tuple));
 	res->x = a[0][0];
-	res->y = a[0][1];
-	res->z = a[0][2];
-	res->id = a[0][3];
+	res->y = a[1][0];
+	res->z = a[2][0];
+	res->id = a[3][0];
 	return (res);
 }
 
