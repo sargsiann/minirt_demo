@@ -115,34 +115,9 @@ t_ray	*ray_operation(t_ray *r, float **matrix,char op)
 	tuple	*res_o;
 	tuple	*res_d;
 
-	if (op == TRSL)
-	{
-		res_d = vector(r->direction->x,r->direction->y,r->direction->z);
-		res_o = point(r->origin->x + matrix[0][3],
-			r->origin->y + matrix[1][3],
-			r->origin->z + matrix[2][3]);
-		res = new_ray(res_o, res_d);
-	}
-	else if (op == ROT)
-	{
-		res_o = mx_to_tuple(matrix_mul(matrix, tuple_to_mx(r->origin), 4, 1));
-		res_d = mx_to_tuple(matrix_mul(matrix, tuple_to_mx(r->direction), 4, 1));
-		res = new_ray(res_o, res_d);
-	}
-	else if (op == SCALE)
-	{
-		res_d = vector(r->direction->x * matrix[0][0],
-			r->direction->y * matrix[1][1],
-			r->direction->z * matrix[2][2]);
-		res_o = point(r->origin->x * matrix[0][0],
-			r->origin->y * matrix[1][1],
-			r->origin->z * matrix[2][2]);
-		res = new_ray(res_o, res_d);
-	}
-	else if (op == IDM)
-	{
-		res = new_ray(r->origin, r->direction);
-	}
+	res_o = mx_to_tuple(matrix_mul(matrix, tuple_to_mx(r->origin), 4, 1));
+	res_d = mx_to_tuple(matrix_mul(matrix, tuple_to_mx(r->direction), 4, 1));
+	res = new_ray(res_o, res_d);
 	return (res);
 }
 

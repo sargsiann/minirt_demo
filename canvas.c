@@ -114,7 +114,7 @@ void	init_image(t_image **img, void *mlx)
 	*img = malloc(sizeof(t_image));
 	if (!img)
 		exit(1);
-	(*img)->img_ptr = mlx_new_image(mlx,1080, 720);
+	(*img)->img_ptr = mlx_new_image(mlx,300,300);
 	(*img)->addres = mlx_get_data_addr((*img)->img_ptr,
 		&(*img)->bpp, &(*img)->line, &(*img)->endian);
 }
@@ -140,15 +140,18 @@ void	render(t_canvas *canvas)
 	float	w_y;
 	float	w_x;
 
-	w_size = 7;
+	w_size = 12;
 	sp = new_sphere(1);
-	sp->transform = new_scale(0.5,0.5,0.5);
-	sp->t_type = SCALE;
-	float px_size = 7.0/100; // PROJECTING CANVAS POSITION TO REAL LIFE POSITION
-	for (int i = 0;i < 100;i++)
+	sp->transform = new_identity();
+	// sp->transform = new_scale(0.2,0.5,1);
+	// sp->transform = matrix_mul(new_rotation_z(PI/4),sp->transform,4,4);
+	// sp->transform = matrix_mul(new_translation(1,0,0),sp->transform,4,4);
+	sp->t_type = TRSL;
+	float px_size = 7.0/300; // PROJECTING CANVAS POSITION TO REAL LIFE POSITION
+	for (int i = 0;i < 300;i++)
 	{
 		w_y = 3.5 - px_size * i; // PROJECTING CANVAS POSITION TO REAL LIFE POSITION
-		for (int j = 0;j < 100;j++)
+		for (int j = 0;j < 300;j++)
 		{
 			w_x = px_size * j - 3.5;
 			pos = point(w_x,w_y,10); // GETTING POINT OF IN WALL BY REAL LIFE SIZES
@@ -211,7 +214,7 @@ void	init_canvas(t_canvas *canvas)
 	if (!canvas)
 		exit(1);
 	canvas->mlx = mlx_init();
-	canvas->win = mlx_new_window(canvas->mlx, 1080,720, "Minirt");
+	canvas->win = mlx_new_window(canvas->mlx, 300,300, "Minirt");
 	init_image(&canvas->image, canvas->mlx);
 	render(canvas);
 	mlx_put_image_to_window(canvas->mlx, canvas->win, canvas->image->img_ptr, 0, 0);
