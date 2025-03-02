@@ -28,6 +28,9 @@
 # include <stdbool.h>
 # include <math.h>
 # include "lib/lib.h"
+# include <threads.h>
+# include <pthread.h>
+
 
 typedef struct s_tuple
 {
@@ -44,6 +47,8 @@ typedef struct s_sphere
 	char	t_type;
 	float	r;
 	char	id;
+	int		color;
+	struct	s_sphere *next;
 }	t_sphere;
 
 typedef struct s_ray
@@ -57,7 +62,7 @@ typedef	struct s_intersect
 {
 	int		count;
 	float	*times;
-	void	*object;
+	t_sphere *s;
 	struct s_intersect	*next;
 }	t_intersect;
 
@@ -85,6 +90,23 @@ typedef struct s_canvas
 	t_image	*image;
 } t_canvas;
 
+typedef pthread_t thread;
+
+
+// typedef struct render
+// {
+// 	t_canvas	*canvas;
+// 	t_ray		*ray;
+// 	t_sphere	*sphere;
+// 	t_intersect	*inter;
+// 	float		w_x;	
+// 	float		w_y;
+// 	float		w_z;
+// 	float		wall_size;
+// 	float		pixel_size;
+// 	int			line_num;
+// }	t_render;
+
 // typedef struct s_projectile
 // {
 // 	tuple	*pos;
@@ -97,6 +119,7 @@ typedef struct s_canvas
 // 	tuple	*wind;	
 // } t_env;
 
+
 // UTILS
 
 void	free_matrix(float **m, int row);
@@ -107,7 +130,7 @@ void	print_tuple(tuple *t);
 void	print_ray(t_ray *r);
 int		is_eq(float a, float b);
 void	print_tuple(tuple *t);
-
+void	free_intersections(t_intersect *i);
 // TUPLES
 void	*tuples_operation(tuple *t1, tuple *t2, int operation);
 void	*tuple_operation(tuple *t1, int operation, float scalar);
@@ -156,5 +179,7 @@ t_ray		*ray_operation(t_ray *r, float **matrix,char op);
 void		set_transform(t_sphere **s,float **t,char type);
 
 // LIGHTS
+
+tuple *normal_at(void *object,tuple *point);
 
 #endif

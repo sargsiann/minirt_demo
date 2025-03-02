@@ -5,6 +5,8 @@
 		"minirt.h": "c",
 		"mlx_int.h": "c",
 		"lib.h": "c",
-		"random": "c"
+		"random": "c",
+		"math.h": "c",
+		"vector": "c"
 	}
 }

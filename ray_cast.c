@@ -69,7 +69,7 @@ t_intersect	*intersect(t_ray	*r,t_sphere	*o)
 		inter->times[0] = (-b + sqrt(discriminant)) / (2 * a);
 	if (inter->count == 2)
 		inter->times[1] = (-b - sqrt(discriminant)) / (2 * a);
-	inter->object = o;
+	inter->s = o;
 	inter->next = NULL;
 	return (inter);
 }
@@ -94,18 +94,19 @@ t_intersect	*find_hit(t_intersect *head)
 
 	min = head;
 	min_float = findMinFloat(head->times, head->count);
-	while (head)
-	{
-		val = findMinFloat(head->times, head->count);
-		if (val < min_float && val >= 0)
-		{
-			min = head;
-			min_float = val;
-		}
-		head = head->next;
-	}
-	if (min_float < 0)
-		return (NULL);
+	
+	// while (head)
+	// {
+	// 	// val = findMinFloat(head->times, head->count);
+	// 	// if (val < min_float && val >= 0)
+	// 	// {
+	// 	// 	min = head;
+	// 	// 	min_float = val;
+	// 	// }
+	// 	head = head->next;
+	// }
+	// // if (min_float < 0)
+	// // 	return (NULL);
 	return (min);
 }
 
@@ -116,7 +117,10 @@ t_ray	*ray_operation(t_ray *r, float **matrix,char op)
 	tuple	*res_d;
 
 	res_o = mx_to_tuple(matrix_mul(matrix, tuple_to_mx(r->origin), 4, 1));
-	res_d = mx_to_tuple(matrix_mul(matrix, tuple_to_mx(r->direction), 4, 1));
+	if (op != TRSL)
+		res_d = mx_to_tuple(matrix_mul(matrix, tuple_to_mx(r->direction), 4, 1));
+	else
+		res_d = vector(r->direction->x,r->direction->y,r->direction->z);
 	res = new_ray(res_o, res_d);
 	return (res);
 }
@@ -141,8 +145,7 @@ void	set_transform(t_sphere **s,float **t, char type)
 	t_sphere	*tmp;
 
 	tmp = *s;
-	free_matrix(tmp->transform,4);
-	tmp->transform = t;
+	tmp->transform = matrix_mul(t,tmp->transform,4,4);
 	tmp->t_type = type;
 	return ;
 }

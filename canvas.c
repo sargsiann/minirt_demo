@@ -1,4 +1,7 @@
 #include "minirt.h"
+
+// INITING MUTEX FOR ONE AT ONCE ACCESING SAME MEMORY
+
 void	put_square(int x, int y, t_image *image, int color)
 {
 	int i = 0;
@@ -130,37 +133,99 @@ tuple	*canvas_cors(tuple *p)
 	return point(p->x + WIDTH/2,HEIGHT/2 - p->y,p->z);
 }
 
+// NEED TO WRITE FUNCTION FOR FINDING FIRST HIT AND PUTTING IT TO IMAGE
+
+void	print_sphere(t_sphere *s)
+{
+	printf("Sphere %d\n",s->id);
+}
+
+t_intersect	*get_sphere_intersections(t_sphere *sps,t_ray *r)
+{
+	t_intersect	*is_head;
+	t_intersect	*is_tmp2;
+
+	is_head = malloc(sizeof(t_intersect));
+	while (sps)
+	{
+		is_tmp2 = intersect(r,sps);
+		if (is_tmp2->count > 0)
+		{
+			addIntersection(&is_head,is_tmp2);	
+		}
+		sps = sps->next;
+	}
+	return (is_head);
+}
+
+
+
 void	render(t_canvas *canvas)
 {
-	t_ray *r;
-	t_intersect	*it;
-	t_sphere	*sp;
-	tuple	*pos;
-	float	w_size;
-	float	w_y;
-	float	w_x;
+	float	w_x,w_y,w_z;
+	float	wall_size;
+	float	pixel_size;
+	float	it_time;
 
-	w_size = 12;
-	sp = new_sphere(1);
-	sp->transform = new_identity();
-	// sp->transform = new_scale(0.2,0.5,1);
-	// sp->transform = matrix_mul(new_rotation_z(PI/4),sp->transform,4,4);
-	// sp->transform = matrix_mul(new_translation(1,0,0),sp->transform,4,4);
-	sp->t_type = TRSL;
-	float px_size = 7.0/300; // PROJECTING CANVAS POSITION TO REAL LIFE POSITION
-	for (int i = 0;i < 300;i++)
+	t_ray *ray;
+	t_sphere *sphere;
+	t_intersect *inter;
+
+	tuple	*it_pos;
+	tuple	*light_pos;
+	tuple	*light_vec;
+	tuple	*normal;
+	tuple	*eye_vec;
+	tuple	*reflect;
+
+
+	wall_size = 7.0;
+	pixel_size = 7.0/300;
+	w_x = 0;
+	w_y = 0;
+	w_z = -6;
+
+
+	sphere = new_sphere(1);
+	sphere->color = 0xff0000;
+
+
+
+	t_sphere *sphere2 = new_sphere(2);
+	sphere2->color = 0x00ff00;
+	set_transform(&sphere2,new_translation(-5,0,17),TRSL);
+	sphere->next = sphere2;
+
+
+	t_sphere *sphere3 = new_sphere(3);
+	sphere3->color = 0xff0ff;
+	sphere2->next = sphere3;
+
+	for (int i = 0; i < 300; i++)
 	{
-		w_y = 3.5 - px_size * i; // PROJECTING CANVAS POSITION TO REAL LIFE POSITION
-		for (int j = 0;j < 300;j++)
+		w_y = 3.5 - pixel_size * i;
+		for (int j = 0; j < 300; j++)
 		{
-			w_x = px_size * j - 3.5;
-			pos = point(w_x,w_y,10); // GETTING POINT OF IN WALL BY REAL LIFE SIZES
-			r = new_ray(point(0,0,-5),tuple_operation(
-				vector(pos->x,pos->y,pos->z - (-5)),NORM,0)); // CREATING RAY FROM ORIGIN TO WALL NORMALIZING VECTOR
-			it = intersect(r,sp);
-			if (it->count > 0) // IF WE HAVE INTERSECTION IN THAT CANVAS POINT CASTED TO REAL-WORLD WE PUT PIXEL
-				my_pixel_put(i,j,canvas->image,0xff0000);
-		}	
+			w_x = j * pixel_size - 3.5;
+
+			ray = new_ray(
+				point(0,0,-5),
+				tuple_operation(
+					vector(w_x,w_y,w_z - (-5)),
+					NORM,
+					0
+				));
+
+			// GETTING ALL INTERSECTIONS OF THAT POINT WITH SPHERES
+			inter = get_sphere_intersections(sphere,ray);
+			
+			if (inter)
+				print_intersections(inter);
+			
+
+			// FREEING INTERSECTIONS FOR THAT POINT
+			free_intersections(inter);
+		}
 	}
 }
 
