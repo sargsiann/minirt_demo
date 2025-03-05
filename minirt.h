@@ -133,6 +133,7 @@ int		is_eq(float a, float b);
 void	print_tuple(tuple *t);
 void	free_intersections(t_intersect *i);
 void	print_spheres(t_sphere *s);
+void	f_swap(float *f1,float *f2);
 
 // TUPLES
 void	*tuples_operation(tuple *t1, tuple *t2, int operation);
@@ -177,12 +178,14 @@ tuple		*position(t_ray *r,float t);
 t_intersect	*intersect(t_ray *r,t_sphere *s);
 void		addIntersection(t_intersect **head, t_intersect *node);
 t_intersect	*find_hit(t_intersect *head);
-float		findMinFloat(float *a, int count);
+t_intersect	*get_sphere_intersections(t_sphere *sps,t_ray *r);
 t_ray		*ray_operation(t_ray *r, float **matrix,char op);
 void		set_transform(t_sphere **s,float **t,char type);
+
 
 // LIGHTS
 
 tuple *normal_at(void *object,tuple *point);
+tuple	*reflect(tuple *in, tuple *normal);
 
 #endif

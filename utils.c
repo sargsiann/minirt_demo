@@ -21,7 +21,8 @@ void	free_intersections(t_intersect *i)
 	{
 		tmp = i;
 		i = i->next;
-		free(tmp->times);
+		if (tmp->times)
+			free(tmp->times);
 		free(tmp);
 	}
 	free(i);
@@ -63,6 +64,15 @@ void	print_intersections(t_intersect *i)
 		print_intersection(i);
 		i = i->next;
 	}
+}
+
+void	f_swap(float *t1,float *t2)
+{
+	float tmp;
+
+	tmp = *t1;
+	*t1 = *t2;
+	*t2 = tmp;
 }
 
 void	print_ray(t_ray *r)

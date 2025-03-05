@@ -2,55 +2,10 @@
 
 // INITING MUTEX FOR ONE AT ONCE ACCESING SAME MEMORY
 
-void	put_square(int x, int y, t_image *image, int color)
+
+int	close(int s)
 {
-	int i = 0;
-	int j = 0;
-	while (i < 5)
-	{
-		j = 0;
-		while (j < 5)
-		{
-			my_pixel_put(x + i, y  + j, image, color);
-			j++;
-		}
-		i++;
-	}
-}
-
-/* EXERCISE 1 AND 0
-
-EXERCISE 0
-
-t_projectile tick(t_projectile p, t_env e)
-{
-	p.pos = (tuple *)(tuples_operation(p.pos,p.velocity,ADD));
-	p.velocity = (tuple *)(tuples_operation(p.velocity,
-		(tuple *)(tuples_operation(e.gravity,e.wind,ADD)),ADD));
-	print_tuple(p.pos); 
-	return (p);
-}
-
-void	render(t_canvas *canvas)
-{
-	t_projectile p;
-	t_env e;
-	p.pos = point(0,720,0);
-	p.velocity = vector(10,-20,0);
-	e.gravity = vector(0,0.5,0);
-	e.wind = vector(-0.1,0,0);
-	while (p.pos->y <= 720)
-	{
-		p = tick(p,e);
-		put_square(p.pos->x,p.pos->y,canvas->image,0x00ff00);
-	}
-}
-*/
-
-
-int	close(int status)
-{
-	exit(status);
+	exit(s);
 }
 
 int	key_hook(int key, void *param)
@@ -109,7 +64,7 @@ void	my_pixel_put(int x, int y, t_image *image, int color)
 int	mouse_hook(int b, int x, int y, void *param)
 {
 	t_canvas *canvas = param;
-	put_square(x, y, canvas->image, rgb_to_color(255, 0, 0));
+	// put_square(x, y, canvas->image, rgb_to_color(255, 0, 0));
 }
 
 void	init_image(t_image **img, void *mlx)
@@ -127,35 +82,6 @@ int loop_hook(void *param)
 	t_canvas *canvas = param;
 	mlx_put_image_to_window(canvas->mlx, canvas->win, canvas->image->img_ptr, 0, 0);
 }
-
-tuple	*canvas_cors(tuple *p)
-{
-	return point(p->x + WIDTH/2,HEIGHT/2 - p->y,p->z);
-}
-
-// NEED TO WRITE FUNCTION FOR FINDING FIRST HIT AND PUTTING IT TO IMAGE
-
-void	print_sphere(t_sphere *s)
-{
-	printf("Sphere %d\n",s->id);
-}
-
-t_intersect	*get_sphere_intersections(t_sphere *sps,t_ray *r)
-{
-	t_intersect	**is_head;
-	t_intersect	*is_tmp2;
-
-	is_head = malloc(sizeof(t_intersect *));
-	while (sps)
-	{
-		is_tmp2 = intersect(r,sps);
-		if (is_tmp2->count > 0)
-			addIntersection(is_head,is_tmp2);	
-		sps = sps->next;
-	}
-	return (*is_head);
-}
-
 
 
 void	render(t_canvas *canvas)
@@ -175,7 +101,7 @@ void	render(t_canvas *canvas)
 	tuple	*light_vec;
 	tuple	*normal;
 	tuple	*eye_vec;
-	tuple	*reflect;
+	tuple	*reflect_vec;
 
 
 	wall_size = 7.0;
@@ -191,13 +117,13 @@ void	render(t_canvas *canvas)
 
 	t_sphere *sphere2 = new_sphere(2);
 	sphere2->color = 0x00ff00;
-	set_transform(&sphere2,new_translation(1,0,-2),TRSL);
+	set_transform(&sphere2,new_translation(2,0,3),TRSL);
 	set_transform(&sphere2,new_scale(0.5,0.5,1),SCALE);
 
 	sphere->next = sphere2;
 	sphere2->next = NULL;
 
-
+	light_pos = point(-10,10,10);
 	// t_sphere *sphere3 = new_sphere(3);
 	// sphere3->color = 0xff0ff;
 	// sphere2->next = sphere3;
@@ -220,68 +146,46 @@ void	render(t_canvas *canvas)
 
 			// GETTING ALL INTERSECTIONS OF THAT POINT WITH SPHERES
 			inter = get_sphere_intersections(sphere,ray);
-			// print_intersections(inter);
-			// printf("--------------------------------------");
 			hit	= find_hit(inter);
-			// print_intersection(hit);
-			if (hit)
-				my_pixel_put(j,i,canvas->image,hit->s->color);
-			// if (inter->count > 0)
-			// 	my_pixel_put(j,i,canvas->image,0x0ff000);
-			
-			// if (inter)
-			// 	print_intersections(inter);
-			
 
 			// FREEING INTERSECTIONS FOR THAT POINT
 			// free_intersections(inter);
+
+			if (hit)
+			{
+			// 	// STARTING LIGHT IMPLEMENTATION
+
+				// my_pixel_put(j,i,canvas->image,hit->s->color);
+
+			// 	// GETTING POSITION OF INTERSECT
+				tuple	*pos = position(ray,
+					hit->times[0]);
+
+			// 	// // EYE VECTOR NEGATING THE RAY DIRECTION UNIT VECTOR
+
+				eye_vec = vector(
+				-ray->direction->x,
+				-ray->direction->y,
+				-ray->direction->z);
+
+			// 	// // LIGHT VECTOR
+
+				light_vec = vector(
+				light_pos->x - pos->x,
+				light_pos->y - pos->y,
+				light_pos->z - pos->z);
+				
+			// 	// NORMAL OF SURFACE
+
+				normal = normal_at(hit->s,pos);
+			
+			// // REFLECT VECTOR
+				reflect_vec = reflect(light_vec,normal);
+				print_tuple(reflect_vec);
+			}
 		}
 	}
 }
-
-// void	render(t_canvas *canvas)
-// {
-// 	float	**cen;
-
-// 	cen = new_matrix(4,1);
-// 	cen[0][0] = WIDTH/2;
-// 	cen[1][0] = HEIGHT/2;
-// 	cen[2][0] = 0;
-// 	cen[3][0] = 1;
-// 	float	**pos;
-
-// 	pos = new_matrix(4,1);
-// 	pos[0][0] = 10;
-// 	pos[1][0] = 10;
-// 	pos[2][0] = 0;
-// 	pos[3][0] = 1;
-// 	put_square(cen[0][0],cen[1][0],canvas->image,0xff0000);
-
-// 	float	**r = new_rotation_z(PI/180);
-// 	int i = 0;
-// 	while (i< 360)
-// 	{
-// 		pos = matrix_mul(r,pos,4,1);
-// 		// tuple *print = canvas_cors(pos)
-// 		put_square(pos[0][0] * 10 + WIDTH/2,HEIGHT/2 - pos[1][0] * 10,canvas->image,0x0000ff);	
-// 		i++;
-// 	}
-// }
-
-
-
-// void	render(t_canvas *canvas)
-// {
-// 	t_ray	*ray;
-// 	tuple	*origin;
-// 	tuple	*direction;
-// 	char	z;
-// 	char	size;
-
-// 	origin = point(0,0,-5);
-// 	z = 10;
-// 	size = 7;
-// }
 
 void	init_canvas(t_canvas *canvas)
 {

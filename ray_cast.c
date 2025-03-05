@@ -47,9 +47,10 @@ t_intersect	*intersect(t_ray	*r,t_sphere	*o)
 	t_intersect	*inter;
 
 	inter = malloc(sizeof(t_intersect));
-	inter->times = NULL;
 	if (!inter)
 		return (NULL);
+	inter->count = 0;
+	inter->times = NULL;
 	if (discriminant < 0)
 		inter->count = 0;
 	else if (discriminant == 0)
@@ -70,20 +71,31 @@ t_intersect	*intersect(t_ray	*r,t_sphere	*o)
 		inter->times[0] = (-b + sqrt(discriminant)) / (2 * a);
 	if (inter->count == 2)
 		inter->times[1] = (-b - sqrt(discriminant)) / (2 * a);
+	if (inter->count > 1 && inter->times[1] < inter->times[0])
+		f_swap(&inter->times[1],&inter->times[2]);
 	inter->s = o;
 	inter->next = NULL;
 	return (inter);
 }
 
-float	findMinFloat(float *a, int count)
+
+t_intersect	*get_sphere_intersections(t_sphere *sps,t_ray *r)
 {
-	float min = a[0];
-	for (int i = 1; i < count; i++)
+	t_intersect	**is_head;
+	t_intersect	*is_tmp2;
+
+	is_head = malloc(sizeof(t_intersect *));
+	*is_head = NULL;
+	while (sps)
 	{
-		if (a[i] < min)
-			min = a[i];
+		is_tmp2 = intersect(r,sps);
+		if (is_tmp2->count > 0)
+		{
+			addIntersection(is_head,is_tmp2);
+		}
+		sps = sps->next;
 	}
-	return (min);
+	return (*is_head);
 }
 
 
@@ -99,7 +111,7 @@ t_intersect	*find_hit(t_intersect *head)
 	{
 		if (!head->times)
 			head = head->next;
-		min_float = findMinFloat(head->times,head->count);
+		min_float = head->times[0];
 		if (min_float < val && min_float > 0)
 		{
 			val = min_float;
