@@ -14,6 +14,9 @@ void	free_intersections(t_intersect *i)
 {
 	t_intersect	*tmp;
 
+	tmp = i;
+	if (!tmp)
+		return ;
 	while (i)
 	{
 		tmp = i;
@@ -24,8 +27,26 @@ void	free_intersections(t_intersect *i)
 	free(i);
 }
 
+void	print_spheres(t_sphere *s)
+{
+	while (s)
+	{
+		printf("--------------------\n");
+		printf("id: %d\n", s->id);
+		printf("sphere\n");
+		printf("center: ");
+		print_tuple(s->center);
+		printf("radius: %.2f\n", s->r);
+		printf("color: %d\n", s->color);
+		s = s->next;
+		printf("--------------------\n");
+	}
+}
+
 void	print_intersection(t_intersect *i)
 {
+	if (!i)
+		return ;
 	printf("--------------------\n");
 	printf("count %d\n", i->count);
 	for (int j = 0; j < i->count; j++)
@@ -35,6 +56,8 @@ void	print_intersection(t_intersect *i)
 
 void	print_intersections(t_intersect *i)
 {
+	if (!i)
+		return ;
 	while (i)
 	{
 		print_intersection(i);

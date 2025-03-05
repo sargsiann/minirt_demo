@@ -47,6 +47,7 @@ t_intersect	*intersect(t_ray	*r,t_sphere	*o)
 	t_intersect	*inter;
 
 	inter = malloc(sizeof(t_intersect));
+	inter->times = NULL;
 	if (!inter)
 		return (NULL);
 	if (discriminant < 0)
@@ -90,23 +91,22 @@ t_intersect	*find_hit(t_intersect *head)
 {
 	t_intersect	*min;
 	float		min_float;
-	float	val;
+	float		val;
 
-	min = head;
-	min_float = findMinFloat(head->times, head->count);
-	
-	// while (head)
-	// {
-	// 	// val = findMinFloat(head->times, head->count);
-	// 	// if (val < min_float && val >= 0)
-	// 	// {
-	// 	// 	min = head;
-	// 	// 	min_float = val;
-	// 	// }
-	// 	head = head->next;
-	// }
-	// // if (min_float < 0)
-	// // 	return (NULL);
+	min = NULL;
+	val = MAX_DIR_VIS_TIME;
+	while (head)
+	{
+		if (!head->times)
+			head = head->next;
+		min_float = findMinFloat(head->times,head->count);
+		if (min_float < val && min_float > 0)
+		{
+			val = min_float;
+			min = head;	
+		}
+		head = head->next;
+	}
 	return (min);
 }
 

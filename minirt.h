@@ -21,6 +21,7 @@
 # define ROT 13
 # define IDM 14
 # define ESC 65307
+# define MAX_DIR_VIS_TIME 1601
 
 # include "mlx.h"
 # include <stdio.h>
@@ -131,6 +132,8 @@ void	print_ray(t_ray *r);
 int		is_eq(float a, float b);
 void	print_tuple(tuple *t);
 void	free_intersections(t_intersect *i);
+void	print_spheres(t_sphere *s);
+
 // TUPLES
 void	*tuples_operation(tuple *t1, tuple *t2, int operation);
 void	*tuple_operation(tuple *t1, int operation, float scalar);

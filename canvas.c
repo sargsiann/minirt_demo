@@ -142,20 +142,18 @@ void	print_sphere(t_sphere *s)
 
 t_intersect	*get_sphere_intersections(t_sphere *sps,t_ray *r)
 {
-	t_intersect	*is_head;
+	t_intersect	**is_head;
 	t_intersect	*is_tmp2;
 
-	is_head = malloc(sizeof(t_intersect));
+	is_head = malloc(sizeof(t_intersect *));
 	while (sps)
 	{
 		is_tmp2 = intersect(r,sps);
 		if (is_tmp2->count > 0)
-		{
-			addIntersection(&is_head,is_tmp2);	
-		}
+			addIntersection(is_head,is_tmp2);	
 		sps = sps->next;
 	}
-	return (is_head);
+	return (*is_head);
 }
 
 
@@ -170,6 +168,7 @@ void	render(t_canvas *canvas)
 	t_ray *ray;
 	t_sphere *sphere;
 	t_intersect *inter;
+	t_intersect	*hit;
 
 	tuple	*it_pos;
 	tuple	*light_pos;
@@ -183,24 +182,27 @@ void	render(t_canvas *canvas)
 	pixel_size = 7.0/300;
 	w_x = 0;
 	w_y = 0;
-	w_z = -6;
+	w_z = 10;
 
 
 	sphere = new_sphere(1);
+	set_transform(&sphere,new_scale(0.7,0.7,1),SCALE);
 	sphere->color = 0xff0000;
-
-
 
 	t_sphere *sphere2 = new_sphere(2);
 	sphere2->color = 0x00ff00;
-	set_transform(&sphere2,new_translation(-5,0,17),TRSL);
+	set_transform(&sphere2,new_translation(1,0,-2),TRSL);
+	set_transform(&sphere2,new_scale(0.5,0.5,1),SCALE);
+
 	sphere->next = sphere2;
+	sphere2->next = NULL;
 
 
-	t_sphere *sphere3 = new_sphere(3);
-	sphere3->color = 0xff0ff;
-	sphere2->next = sphere3;
+	// t_sphere *sphere3 = new_sphere(3);
+	// sphere3->color = 0xff0ff;
+	// sphere2->next = sphere3;
 
+	// print_spheres(sphere); SPHERES LIST IS OKAY
 	for (int i = 0; i < 300; i++)
 	{
 		w_y = 3.5 - pixel_size * i;
@@ -218,13 +220,21 @@ void	render(t_canvas *canvas)
 
 			// GETTING ALL INTERSECTIONS OF THAT POINT WITH SPHERES
 			inter = get_sphere_intersections(sphere,ray);
+			// print_intersections(inter);
+			// printf("--------------------------------------");
+			hit	= find_hit(inter);
+			// print_intersection(hit);
+			if (hit)
+				my_pixel_put(j,i,canvas->image,hit->s->color);
+			// if (inter->count > 0)
+			// 	my_pixel_put(j,i,canvas->image,0x0ff000);
 			
-			if (inter)
-				print_intersections(inter);
+			// if (inter)
+			// 	print_intersections(inter);
 			
 
 			// FREEING INTERSECTIONS FOR THAT POINT
-			free_intersections(inter);
+			// free_intersections(inter);
 		}
 	}
 }
