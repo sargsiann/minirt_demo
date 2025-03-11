@@ -114,9 +114,12 @@ void	render(t_canvas *canvas)
 
 
 	sphere = new_sphere(1);
+	set_transform(&sphere,new_translation(-0.5,1,0),TRSL);
 	sphere->color = 0xff0000;
 
 	t_sphere *sphere2 = new_sphere(2);
+	set_transform(&sphere2,new_translation(1,0,0),TRSL);
+	set_transform(&sphere2,new_scale(0.5,0.5,0.5),SCALE);
 	sphere2->color = 0x00ff00;
 	
 
@@ -126,10 +129,10 @@ void	render(t_canvas *canvas)
 	light_pos = point(-10,10,10);
 	eye_pos = point(0,0,-5);
 	
-	for (int i = 150; i< 151 ; i++)
+	for (int i = 0; i< 300; i++)
 	{
 		w_y = 3.5 - pixel_size * i;
-		for (int j = 150; j < 151; j++)
+		for (int j = 0; j < 300; j++)
 		{
 			w_x = j * pixel_size - 3.5;
 
@@ -139,20 +142,32 @@ void	render(t_canvas *canvas)
 			// GETTING INTERSECTIONS OF SPHERES WITH RAY IN THAT EXACT POINT
 
 			inter = get_sphere_intersections(sphere,ray);
-			print_intersections(inter);
-
-			// GETING HIT
 			hit = find_hit(inter);
 
 			if (hit)
-				my_pixel_put(j,i,canvas->image,hit->s->color);
+			{
+				it_pos = position(ray,hit->times[0]);
+				normal = normal_at(hit->s,it_pos);
+				eye_vec = vector(0,0,-1);
+				reflect_vec = reflect(ray->direction,normal);
+				light_vec = tuples_operation(light_pos,it_pos,SUB);
 
+				my_pixel_put(j,i,canvas->image,hit->s->color);
+			}
 			// FREEING THIS RAY 
 			free(ray_dir);
 			free(ray);
 
 			// FREEING ALL INTERSECTIONS FOR THIS POINT HIT WILL BE FREED WITH THAT
 			free_intersections(inter);
+
+			// FREEING ALL THE MEMORY
+			free(it_pos);
+			free(normal);
+			// free(eye_vec);
+			// free(reflect_vec);
+			// free(light_vec);
+
 		}
 	}
 

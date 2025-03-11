@@ -42,22 +42,22 @@ void	addIntersection(t_intersect **head, t_intersect *node)
 
 t_intersect	*intersect(t_ray *r, t_sphere *o)
 {
-	// Инвертируем трансформацию сферы и применяем к лучу
 	float **I = inverse(o->transform, 4, 4);
 	t_ray *r2 = ray_operation(r, I, o->t_type);
 
-	// Вычисляем коэффициенты квадратного уравнения
 	float *a_ptr = (float *)tuples_operation(r2->direction, r2->direction, SCL_MUL);
 	float *b_ptr = (float *)tuples_operation(r2->origin, r2->direction, SCL_MUL);
 	float *c_ptr = (float *)tuples_operation(r2->origin, r2->origin, SCL_MUL);
+
 
 	float a = *a_ptr;
 	float b = 2 * (*b_ptr);
 	float c = (*c_ptr) - 1;
 
+	
+
 	float discriminant = (b * b) - (4 * a * c);
 
-	// Создаём объект пересечения
 	t_intersect *inter = malloc(sizeof(t_intersect));
 	if (!inter)
 		return (NULL);
@@ -65,10 +65,7 @@ t_intersect	*intersect(t_ray *r, t_sphere *o)
 	inter->times = NULL;
 
 	if (discriminant < 0)
-	{
-		// Нет пересечений
 		inter->count = 0;
-	}
 	else
 	{
 		inter->count = (discriminant == 0) ? 1 : 2;
@@ -79,21 +76,17 @@ t_intersect	*intersect(t_ray *r, t_sphere *o)
 			return (NULL);
 		}
 
-		// Вычисляем корни
 		inter->times[0] = (-b - sqrt(discriminant)) / (2 * a);
 		if (inter->count == 2)
 			inter->times[1] = (-b + sqrt(discriminant)) / (2 * a);
 
-		// Упорядочиваем корни
 		if (inter->count == 2 && inter->times[0] > inter->times[1])
 			f_swap(&inter->times[0], &inter->times[1]);
 	}
 
-	// Присваиваем сферу и обнуляем next
 	inter->s = o;
 	inter->next = NULL;
 
-	// Освобождаем временные данные
 	free(a_ptr);
 	free(b_ptr);
 	free(c_ptr);
@@ -117,6 +110,8 @@ t_intersect	*get_sphere_intersections(t_sphere *sps, t_ray *r)
 		{
 			addIntersection(&is_head, is_tmp2);
 		}
+		else
+			free(is_tmp2);
 		sps = sps->next;
 	}
 	return (is_head);
@@ -168,10 +163,11 @@ t_ray	*ray_operation(t_ray *r, float **matrix,char op)
 		free_matrix(tmp,4);
 	}
 	else
+	{
 		res_d = vector(r->direction->x,r->direction->y,r->direction->z);
+		free_matrix(ray_d_matrix,4);
+	}
 	res = new_ray(res_o, res_d);
-	// free_matrix(ray_o_matrix,4);
-	// free_matrix(ray_d_matrix,4);
 	return (res);
 }
 

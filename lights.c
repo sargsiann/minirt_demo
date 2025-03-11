@@ -15,10 +15,10 @@ tuple	*normal_at(void	*object,tuple	*point)
 
 	I = inverse(sphere->transform,4,4);
 	
-	object_point = mx_to_tuple(matrix_mul(I, tuple_to_mx(point), 4, 1));
+	object_point = mx_to_tuple(matrix_mul(I, tuple_to_mx(point), 4, 1, false, true));
 	object_normal = vector(object_point->x,object_point->y,object_point->z);
 	transpose(I,4,4);
-	world_normal = mx_to_tuple(matrix_mul(I, tuple_to_mx(object_normal), 4, 1));
+	world_normal = mx_to_tuple(matrix_mul(I, tuple_to_mx(object_normal), 4, 1, false, true));
 	world_normal->id = 0;
 	free(object_point);
 	free(object_normal);
