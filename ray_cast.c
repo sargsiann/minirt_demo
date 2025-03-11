@@ -24,78 +24,102 @@ tuple	*position(t_ray	*ray, float	time)
 
 void	addIntersection(t_intersect **head, t_intersect *node)
 {
-	t_intersect	*tmp;
+	if (!node)
+		return;
+	node->next = NULL; // Обнуляем, чтобы не тащить мусор
 
-	tmp = *head;
-	if (!tmp)
+	if (!*head)
 	{
 		*head = node;
-		return ;
+		return;
 	}
+
+	t_intersect	*tmp = *head;
 	while (tmp->next)
 		tmp = tmp->next;
 	tmp->next = node;
 }
 
-t_intersect	*intersect(t_ray	*r,t_sphere	*o)
+t_intersect	*intersect(t_ray *r, t_sphere *o)
 {
-	t_ray *r2 = ray_operation(r,inverse(o->transform,4,4),o->t_type);	
-	float a = *(float *)(tuples_operation(r2->direction, r2->direction, SCL_MUL));
-	float b = 2 * *(float *)(tuples_operation(r2->direction, r2->origin, SCL_MUL));
-	float c = *(float *)(tuples_operation(r2->origin,r2->origin, SCL_MUL)) - 1;
-	float discriminant = b * b - 4 * a * c;
-	t_intersect	*inter;
+	// Инвертируем трансформацию сферы и применяем к лучу
+	float **I = inverse(o->transform, 4, 4);
+	t_ray *r2 = ray_operation(r, I, o->t_type);
 
-	inter = malloc(sizeof(t_intersect));
+	// Вычисляем коэффициенты квадратного уравнения
+	float *a_ptr = (float *)tuples_operation(r2->direction, r2->direction, SCL_MUL);
+	float *b_ptr = (float *)tuples_operation(r2->origin, r2->direction, SCL_MUL);
+	float *c_ptr = (float *)tuples_operation(r2->origin, r2->origin, SCL_MUL);
+
+	float a = *a_ptr;
+	float b = 2 * (*b_ptr);
+	float c = (*c_ptr) - 1;
+
+	float discriminant = (b * b) - (4 * a * c);
+
+	// Создаём объект пересечения
+	t_intersect *inter = malloc(sizeof(t_intersect));
 	if (!inter)
 		return (NULL);
 	inter->count = 0;
 	inter->times = NULL;
+
 	if (discriminant < 0)
-		inter->count = 0;
-	else if (discriminant == 0)
 	{
-		inter->count = 1;
-		inter->times = malloc(sizeof(float));
-		if (!inter->times)
-			return (NULL);
+		// Нет пересечений
+		inter->count = 0;
 	}
 	else
 	{
-		inter->count = 2;
-		inter->times = malloc(sizeof(float) * 2);
+		inter->count = (discriminant == 0) ? 1 : 2;
+		inter->times = malloc(sizeof(float) * inter->count);
 		if (!inter->times)
+		{
+			free(inter);
 			return (NULL);
+		}
+
+		// Вычисляем корни
+		inter->times[0] = (-b - sqrt(discriminant)) / (2 * a);
+		if (inter->count == 2)
+			inter->times[1] = (-b + sqrt(discriminant)) / (2 * a);
+
+		// Упорядочиваем корни
+		if (inter->count == 2 && inter->times[0] > inter->times[1])
+			f_swap(&inter->times[0], &inter->times[1]);
 	}
-	if (inter->count > 0)
-		inter->times[0] = (-b + sqrt(discriminant)) / (2 * a);
-	if (inter->count == 2)
-		inter->times[1] = (-b - sqrt(discriminant)) / (2 * a);
-	if (inter->count > 1 && inter->times[1] < inter->times[0])
-		f_swap(&inter->times[1],&inter->times[2]);
+
+	// Присваиваем сферу и обнуляем next
 	inter->s = o;
 	inter->next = NULL;
+
+	// Освобождаем временные данные
+	free(a_ptr);
+	free(b_ptr);
+	free(c_ptr);
+	free(r2->origin);
+	free(r2->direction);
+	free(r2);
+	free_matrix(I, 4);
+
 	return (inter);
 }
 
-
-t_intersect	*get_sphere_intersections(t_sphere *sps,t_ray *r)
+t_intersect	*get_sphere_intersections(t_sphere *sps, t_ray *r)
 {
-	t_intersect	**is_head;
+	t_intersect	*is_head = NULL;
 	t_intersect	*is_tmp2;
 
-	is_head = malloc(sizeof(t_intersect *));
-	*is_head = NULL;
 	while (sps)
 	{
-		is_tmp2 = intersect(r,sps);
-		if (is_tmp2->count > 0)
+		is_tmp2 = intersect(r, sps);
+		if (is_tmp2 && is_tmp2->count > 0)
 		{
-			addIntersection(is_head,is_tmp2);
+			addIntersection(&is_head, is_tmp2);
 		}
 		sps = sps->next;
 	}
-	return (*is_head);
+	return (is_head);
 }
 
 
@@ -127,13 +151,27 @@ t_ray	*ray_operation(t_ray *r, float **matrix,char op)
 	t_ray	*res;
 	tuple	*res_o;
 	tuple	*res_d;
+	float	**ray_o_matrix;
+	float	**ray_d_matrix;
+	float	**tmp;
 
-	res_o = mx_to_tuple(matrix_mul(matrix, tuple_to_mx(r->origin), 4, 1));
+
+	ray_o_matrix = tuple_to_mx(r->origin);
+	ray_d_matrix = tuple_to_mx(r->direction);
+	tmp = matrix_mul(matrix, ray_o_matrix, 4, 1, false, true);
+	res_o = mx_to_tuple(tmp);
+	free_matrix(tmp,4);
 	if (op != TRSL)
-		res_d = mx_to_tuple(matrix_mul(matrix, tuple_to_mx(r->direction), 4, 1));
+	{
+		tmp = matrix_mul(matrix, ray_d_matrix, 4, 1, false, true);
+		res_d = mx_to_tuple(tmp);
+		free_matrix(tmp,4);
+	}
 	else
 		res_d = vector(r->direction->x,r->direction->y,r->direction->z);
 	res = new_ray(res_o, res_d);
+	// free_matrix(ray_o_matrix,4);
+	// free_matrix(ray_d_matrix,4);
 	return (res);
 }
 
@@ -155,9 +193,11 @@ t_sphere	*new_sphere(int id)
 void	set_transform(t_sphere **s,float **t, char type)
 {
 	t_sphere	*tmp;
+	float		**t_mtx;
 
 	tmp = *s;
-	tmp->transform = matrix_mul(t,tmp->transform,4,4);
+	t_mtx = tmp->transform;
+	tmp->transform = matrix_mul(t_mtx, t, 4, 4, true, true);
 	tmp->t_type = type;
 	return ;
 }

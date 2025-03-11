@@ -32,6 +32,32 @@
 # include <threads.h>
 # include <pthread.h>
 
+typedef struct s_tuple tuple;
+typedef struct s_sphere t_sphere;
+typedef struct s_ray t_ray;
+typedef struct s_intersect t_intersect;
+typedef struct s_color t_color;
+typedef struct s_canvas t_canvas;
+typedef struct s_light t_light;
+typedef struct s_material t_material;
+typedef struct s_image t_image;
+
+
+typedef	struct s_light
+{
+	tuple	*intens;
+	tuple	*pos;
+}	t_light;
+
+typedef	struct s_material
+{
+	t_color	*color;
+	float	ambient;
+	float	diffuse;
+	float	specular;
+	float	shininess;
+}	t_material;
+
 
 typedef struct s_tuple
 {
@@ -43,13 +69,14 @@ typedef struct s_tuple
 
 typedef struct s_sphere
 {
-	tuple	*center;
-	float	**transform;
-	char	t_type;
-	float	r;
-	char	id;
-	int		color;
-	struct	s_sphere *next;
+	tuple				*center;
+	float				**transform;
+	char				t_type;
+	float				r;
+	char				id;
+	int					color;
+	t_material			*m;
+	struct	s_sphere	*next;
 }	t_sphere;
 
 typedef struct s_ray
@@ -123,6 +150,8 @@ typedef pthread_t thread;
 
 // UTILS
 
+void	free_spheres(t_sphere *s);
+void	free_ray(t_ray *r);
 void	free_matrix(float **m, int row);
 void	print_intersection(t_intersect *i);
 void	print_intersections(t_intersect *i);
@@ -151,7 +180,7 @@ void	put_square(int x, int y, t_image *image, int color);
 // MATRIXES
 
 float	**new_matrix(int row, int col);
-float	**matrix_mul(float **a, float **b,char row,char col);
+float	**matrix_mul(float **a, float **b, char row, char col, bool free_a, bool free_b);
 float	**tuple_to_mx(tuple *a);
 void	transpose(float **a, char row, char col);
 tuple	*mx_to_tuple(float **a);

@@ -4,6 +4,7 @@ float	determinant(float **a, char rows, char cols)
 {
 	float	res;
 	char	i;
+	float	**sub;
 
 	res = 0;
 	if (rows == 2 && cols == 2)
@@ -11,8 +12,10 @@ float	determinant(float **a, char rows, char cols)
 	i = -1;
 	while (++i < cols)
 	{
+		sub = submatrix(a, rows, cols, 0, i);
 		res += a[0][i] * pow(-1, i) 
-			* determinant(submatrix(a, rows, cols, 0, i), rows - 1, cols - 1);		
+			* determinant(sub, rows - 1, cols - 1);	
+		free_matrix(sub, rows - 1);
 	}
 	return (res);
 }
@@ -28,7 +31,7 @@ float	cofactor(float **a, char rows, char cols, char r, char c)
 	return (res);
 }
 
-float	**matrix_mul(float **a, float **b,char row,char col)
+float	**matrix_mul(float **a, float **b,char row,char col, bool free_a, bool free_b)
 {
 	float	**res;
 	char	i;
@@ -50,6 +53,10 @@ float	**matrix_mul(float **a, float **b,char row,char col)
 			res[i][j] = sum;
 		}
 	}	
+	if (free_a)
+		free_matrix(a,row);
+	if (free_b)
+		free_matrix(b,row);
 	return (res);
 }
 
@@ -161,6 +168,8 @@ float	**inverse(float **a, char rows, char cols)
 	if (det <= 0)
 		return (NULL);
 	res = new_matrix(rows, cols);
+	if (!res)
+		return (NULL);
 	i = -1;
 	while (++i < rows)
 	{

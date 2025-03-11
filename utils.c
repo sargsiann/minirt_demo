@@ -1,5 +1,6 @@
 #include "minirt.h"
 
+
 void	free_matrix(float **m, int row)
 {
 	int	i;
@@ -8,6 +9,35 @@ void	free_matrix(float **m, int row)
 	while (++i < row)
 		free(m[i]);
 	free(m);
+}
+
+void	free_ray(t_ray *r)
+{
+	if (r->origin)
+		free(r->origin);
+	if (r->direction)
+		free(r->direction);
+	free(r);
+}
+
+void	free_spheres(t_sphere *s)
+{
+	t_sphere	*tmp;
+
+	tmp = s;
+	if (!tmp)
+		return ;
+	while (s)
+	{
+		tmp = s;
+		s = s->next;
+		if (tmp->center)
+			free(tmp->center);
+		if (tmp->transform)
+			free_matrix(tmp->transform,4);
+		free(tmp);
+	}
+	free(s);
 }
 
 void	free_intersections(t_intersect *i)
