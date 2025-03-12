@@ -194,7 +194,7 @@ void	set_transform(t_sphere **s,float **t, char type)
 
 	tmp = *s;
 	t_mtx = tmp->transform;
-	tmp->transform = matrix_mul(t_mtx, t, 4, 4, true, true);
+	tmp->transform = matrix_mul(t_mtx,t, 4, 4, true, true);
 	tmp->t_type = type;
 	return ;
 }

@@ -22,6 +22,12 @@
 # define IDM 14
 # define ESC 65307
 # define MAX_DIR_VIS_TIME 1601
+# define DEF_AMBIENT 0.1
+# define DEF_DIFFUSE 0.9
+# define DEF_SPECULAR 0.9
+# define DEF_SHININESS 200
+
+
 
 # include "mlx.h"
 # include <stdio.h>
@@ -216,5 +222,6 @@ void		set_transform(t_sphere **s,float **t,char type);
 
 tuple *normal_at(void *object,tuple *point);
 tuple	*reflect(tuple *in, tuple *normal);
+t_material	*material(float ambient, float diffuse, float specular, float shininess);
 
 #endif

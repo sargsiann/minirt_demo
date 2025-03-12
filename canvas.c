@@ -105,6 +105,8 @@ void	render(t_canvas *canvas)
 	tuple	*eye_vec = NULL;
 	tuple	*reflect_vec = NULL;
 
+	t_material *m;
+
 
 	wall_size = 7.0;
 	pixel_size = 7.0 / 300;
@@ -114,25 +116,29 @@ void	render(t_canvas *canvas)
 
 
 	sphere = new_sphere(1);
-	// set_transform(&sphere,new_translation(-0.5,1,0),TRSL);
+	set_transform(&sphere, new_rotation_z(PI / 4), ROT);	
+
+	set_transform(&sphere,new_scale(0.6,0.2,0.3),SCALE);
+
 	sphere->color = 0xff0000;
 
-	t_sphere *sphere2 = new_sphere(2);
-	// set_transform(&sphere2,new_translation(1,0,0),TRSL);
-	// set_transform(&sphere2,new_scale(0.5,0.5,0.5),SCALE);
-	sphere2->color = 0x00ff00;
-	
+	// t_sphere *sphere2 = new_sphere(2);
+	// set_transform(&sphere2,new_translation(0,0,-2),TRSL);
+	// set_transform(&sphere2,new_scale(0.7,0.5,0.5),SCALE);
+// 
+	// sphere2->color = 0x00ff00;
+	// 
+// 
+	// sphere->next = sphere2;
+	// sphere2->next = NULL;
 
-	sphere->next = sphere2;
-	sphere2->next = NULL;
-
-	light_pos = point(-10,10,10);
+	light_pos = point(0,0,-20);
 	eye_pos = point(0,0,-5);
 	
-	for (int i = 150; i< 151; i++)
+	for (int i = 0; i< 300; i++)
 	{
 		w_y = 3.5 - pixel_size * i;
-		for (int j = 150; j < 151; j++)
+		for (int j = 0; j < 300; j++)
 		{
 			w_x = j * pixel_size - 3.5;
 
@@ -148,15 +154,24 @@ void	render(t_canvas *canvas)
 			{
 				it_pos = position(ray,hit->times[0]);
 				normal = normal_at(hit->s,it_pos);
-				// eye_vec = vector(0,0,-1);
-				// reflect_vec = reflect(ray->direction,normal);
-				// light_vec = tuples_operation(light_pos,it_pos,SUB);
+				eye_vec = vector(0,0,-1);
+				reflect_vec = reflect(ray->direction,normal);
+				light_vec = tuples_operation(light_pos,it_pos,SUB);
 
-				my_pixel_put(j,i,canvas->image,hit->s->color);
+
 				
+				my_pixel_put(j,i,canvas->image,hit->s->color);
+				hit->s->m = material(0.1,0.9,0.9,200);
+				hit->s->m->color = hit->s->color;
+
+
 				// FREEING MEMORY OF LIGHTS
-				free(it_pos);
+				free(hit->s->m);
+				free(reflect_vec);
 				free(normal);
+				free(it_pos);
+				free(light_vec);
+				free(eye_vec);
 			}
 			// FREEING THIS RAY 
 			free(ray_dir);
