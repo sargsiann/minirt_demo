@@ -96,14 +96,14 @@ void	render(t_canvas *canvas)
 	t_intersect *inter;
 	t_intersect	*hit;
 
-	tuple	*eye_pos;
-	tuple	*ray_dir;
-	tuple	*it_pos;
-	tuple	*light_pos;
-	tuple	*light_vec;
-	tuple	*normal;
-	tuple	*eye_vec;
-	tuple	*reflect_vec;
+	tuple	*eye_pos = NULL;
+	tuple	*ray_dir ;
+	tuple	*it_pos = NULL;
+	tuple	*light_pos = NULL;
+	tuple	*light_vec = NULL;
+	tuple	*normal = NULL;
+	tuple	*eye_vec = NULL;
+	tuple	*reflect_vec = NULL;
 
 
 	wall_size = 7.0;
@@ -114,12 +114,12 @@ void	render(t_canvas *canvas)
 
 
 	sphere = new_sphere(1);
-	set_transform(&sphere,new_translation(-0.5,1,0),TRSL);
+	// set_transform(&sphere,new_translation(-0.5,1,0),TRSL);
 	sphere->color = 0xff0000;
 
 	t_sphere *sphere2 = new_sphere(2);
-	set_transform(&sphere2,new_translation(1,0,0),TRSL);
-	set_transform(&sphere2,new_scale(0.5,0.5,0.5),SCALE);
+	// set_transform(&sphere2,new_translation(1,0,0),TRSL);
+	// set_transform(&sphere2,new_scale(0.5,0.5,0.5),SCALE);
 	sphere2->color = 0x00ff00;
 	
 
@@ -129,10 +129,10 @@ void	render(t_canvas *canvas)
 	light_pos = point(-10,10,10);
 	eye_pos = point(0,0,-5);
 	
-	for (int i = 0; i< 300; i++)
+	for (int i = 150; i< 151; i++)
 	{
 		w_y = 3.5 - pixel_size * i;
-		for (int j = 0; j < 300; j++)
+		for (int j = 150; j < 151; j++)
 		{
 			w_x = j * pixel_size - 3.5;
 
@@ -148,11 +148,15 @@ void	render(t_canvas *canvas)
 			{
 				it_pos = position(ray,hit->times[0]);
 				normal = normal_at(hit->s,it_pos);
-				eye_vec = vector(0,0,-1);
-				reflect_vec = reflect(ray->direction,normal);
-				light_vec = tuples_operation(light_pos,it_pos,SUB);
+				// eye_vec = vector(0,0,-1);
+				// reflect_vec = reflect(ray->direction,normal);
+				// light_vec = tuples_operation(light_pos,it_pos,SUB);
 
 				my_pixel_put(j,i,canvas->image,hit->s->color);
+				
+				// FREEING MEMORY OF LIGHTS
+				free(it_pos);
+				free(normal);
 			}
 			// FREEING THIS RAY 
 			free(ray_dir);
@@ -160,13 +164,6 @@ void	render(t_canvas *canvas)
 
 			// FREEING ALL INTERSECTIONS FOR THIS POINT HIT WILL BE FREED WITH THAT
 			free_intersections(inter);
-
-			// FREEING ALL THE MEMORY
-			free(it_pos);
-			free(normal);
-			// free(eye_vec);
-			// free(reflect_vec);
-			// free(light_vec);
 
 		}
 	}

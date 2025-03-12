@@ -183,7 +183,7 @@ float	**new_matrix(int row, int col);
 float	**matrix_mul(float **a, float **b, char row, char col, bool free_a, bool free_b);
 float	**tuple_to_mx(tuple *a);
 void	transpose(float **a, char row, char col);
-tuple	*mx_to_tuple(float **a);
+tuple	*mx_to_tuple(float **a, int f);
 float	**submatrix(float **a,char rows, char cols, char d_r,char d_c);
 float	determinant(float **a, char rows, char cols);
 float	**inverse(float **a, char rows, char cols);

@@ -31,7 +31,7 @@ void *tuple_operation(tuple *t1, int operation, float scalar)
 		return (NULL);
 	if (operation == NEG)
 	{
-		return (vector(-t1->x, -t1->y, -t1->z));
+		res = vector(-t1->x, -t1->y, -t1->z);
 	}
 	if (operation == MUL)
 	{
@@ -48,8 +48,9 @@ void *tuple_operation(tuple *t1, int operation, float scalar)
 	if (operation == NORM)
 	{
 		float mag = *(float *)(tuple_operation(t1, MAG, 0));
-		return (vector(t1->x / mag, t1->y / mag, t1->z / mag));
+		res = vector(t1->x / mag, t1->y / mag, t1->z / mag);
 	}
+	free(fl_res);
 	return (res);
 }
 
@@ -73,17 +74,19 @@ void	*tuples_operation(tuple *t1, tuple *t2, int operation)
 		res->x = t1->x + t2->x;
 		res->y = t1->y + t2->y;
 		res->z = t1->z + t2->z;
-	} 
-	if (operation == SUB)
-	{
-		return (vector(t1->x - t2->x, t1->y - t2->y, t1->z - t2->z));
+		free(fl_res);
+		return (res);
 	}
+	free(res);
+	if (operation == SUB)
+		res = vector(t1->x - t2->x, t1->y - t2->y, t1->z - t2->z);
 	if (operation == VEC_MUL)
 	{
-		return (vector(t1->y * t2->z - t1->z * t2->y, 
+		res = (vector(t1->y * t2->z - t1->z * t2->y, 
 			t1->z * t2->x - t1->x * t2->z,
 			t1->x * t2->y - t1->y * t2->x));
 	}
+	free(fl_res);
 	return (res);
 }
 

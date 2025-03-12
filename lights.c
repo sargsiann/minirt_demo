@@ -4,6 +4,7 @@ tuple	*normal_at(void	*object,tuple	*point)
 {
 	t_sphere	*sphere;
 	tuple	*object_point;
+	float	**point_matrix;
 	tuple	*object_normal;
 	tuple	*world_normal;
 	tuple	*world_point;
@@ -14,17 +15,14 @@ tuple	*normal_at(void	*object,tuple	*point)
 	sphere = (t_sphere *)object;
 
 	I = inverse(sphere->transform,4,4);
-	
-	object_point = mx_to_tuple(matrix_mul(I, tuple_to_mx(point), 4, 1, false, true));
-	object_normal = vector(object_point->x,object_point->y,object_point->z);
-	transpose(I,4,4);
-	world_normal = mx_to_tuple(matrix_mul(I, tuple_to_mx(object_normal), 4, 1, false, true));
-	world_normal->id = 0;
-	free(object_point);
-	free(object_normal);
-	free(I);
+	point_matrix = matrix_mul(I,tuple_to_mx(point),4,1,false,true);
+	// object_point = mx_to_tuple(point_matrix,4);
 
-	return (world_normal);
+	print_matrix(point_matrix,4,1);
+	// print_tuple(object_point);
+	// free(object_point);
+	// free_matrix(point_matrix,true);
+	// free_matrix(I,4);
 }
 
 tuple	*reflect(tuple *in, tuple *normal)

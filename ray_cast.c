@@ -15,10 +15,11 @@ t_ray	*new_ray(tuple *o,tuple *d)
 tuple	*position(t_ray	*ray, float	time)
 {
 	tuple	*pos;
+	tuple	*tmp;
 
-	pos = tuples_operation(ray->origin, 
-		tuple_operation(ray->direction, MUL, time), 
-		ADD);
+	tmp = tuple_operation(ray->direction, MUL, time);
+	pos = tuples_operation(ray->origin, tmp, ADD);
+	free(tmp);
 	return(pos);
 }
 
@@ -154,12 +155,12 @@ t_ray	*ray_operation(t_ray *r, float **matrix,char op)
 	ray_o_matrix = tuple_to_mx(r->origin);
 	ray_d_matrix = tuple_to_mx(r->direction);
 	tmp = matrix_mul(matrix, ray_o_matrix, 4, 1, false, true);
-	res_o = mx_to_tuple(tmp);
+	res_o = mx_to_tuple(tmp,false);
 	free_matrix(tmp,4);
 	if (op != TRSL)
 	{
 		tmp = matrix_mul(matrix, ray_d_matrix, 4, 1, false, true);
-		res_d = mx_to_tuple(tmp);
+		res_d = mx_to_tuple(tmp,false);
 		free_matrix(tmp,4);
 	}
 	else

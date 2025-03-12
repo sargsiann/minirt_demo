@@ -92,7 +92,7 @@ float	**tuple_to_mx(tuple *a)
 	return (res);
 }
 
-tuple	*mx_to_tuple(float **a)
+tuple	*mx_to_tuple(float **a, int f)
 {
 	tuple	*res;
 
@@ -101,6 +101,8 @@ tuple	*mx_to_tuple(float **a)
 	res->y = a[1][0];
 	res->z = a[2][0];
 	res->id = a[3][0];
+	if (f)
+		free_matrix(a,4);
 	return (res);
 }
 
