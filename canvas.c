@@ -8,6 +8,19 @@ int	close(int s)
 	exit(s);
 }
 
+t_color	*new_color(unsigned char r, unsigned char g, unsigned char b)
+{
+	t_color *color;
+
+	color = malloc(sizeof(t_color));
+	if (!color)
+		exit(1);
+	color->r = r;
+	color->g = g;
+	color->b = b;
+	return (color);
+}
+
 int	key_hook(int key, void *param)
 {
 	if (key == ESC)
@@ -48,10 +61,11 @@ t_color	*colors_operation(t_color c1, t_color t2, char operation)
 	return (res);
 }
 
-int		rgb_to_color(short r, short g, short b)
+int		rgb_to_color(t_color	*color)
 {
-	return (r << 16 | g << 8 | b);
+	return (color->r << 16 | color->g << 8 | color->b << 0);
 }
+
 
 void	my_pixel_put(int x, int y, t_image *image, int color)
 {
@@ -70,7 +84,7 @@ int	mouse_hook(int b, int x, int y, void *param)
 void	init_image(t_image **img, void *mlx)
 {
 	*img = malloc(sizeof(t_image));
-	if (!img)
+	if (!*img)
 		exit(1);
 	(*img)->img_ptr = mlx_new_image(mlx,300,300);
 	(*img)->addres = mlx_get_data_addr((*img)->img_ptr,
@@ -90,7 +104,10 @@ void	render(t_canvas *canvas)
 	float	wall_size;
 	float	pixel_size;
 	float	it_time;
+	int		color;
 
+
+	t_light	*light;
 	t_ray *ray;
 	t_sphere *sphere;
 	t_intersect *inter;
@@ -99,11 +116,8 @@ void	render(t_canvas *canvas)
 	tuple	*eye_pos = NULL;
 	tuple	*ray_dir ;
 	tuple	*it_pos = NULL;
-	tuple	*light_pos = NULL;
-	tuple	*light_vec = NULL;
 	tuple	*normal = NULL;
 	tuple	*eye_vec = NULL;
-	tuple	*reflect_vec = NULL;
 
 	t_material *m;
 
@@ -116,33 +130,22 @@ void	render(t_canvas *canvas)
 
 
 	sphere = new_sphere(1);
-	set_transform(&sphere, new_rotation_z(PI / 4), ROT);	
+	sphere->m = material(0.1,0.9,0.9,200);
+	sphere->m->color = point(255,0,0);
 
-	set_transform(&sphere,new_scale(0.6,0.2,0.3),SCALE);
-
-	sphere->color = 0xff0000;
-
-	// t_sphere *sphere2 = new_sphere(2);
-	// set_transform(&sphere2,new_translation(0,0,-2),TRSL);
-	// set_transform(&sphere2,new_scale(0.7,0.5,0.5),SCALE);
-// 
-	// sphere2->color = 0x00ff00;
-	// 
-// 
-	// sphere->next = sphere2;
-	// sphere2->next = NULL;
-
-	light_pos = point(0,0,-20);
+	light = new_light();
 	eye_pos = point(0,0,-5);
+
+	light->pos = point(0,0, 2);
 	
-	for (int i = 0; i< 300; i++)
+	for (int i = 0; i<300; i++)
 	{
 		w_y = 3.5 - pixel_size * i;
 		for (int j = 0; j < 300; j++)
 		{
 			w_x = j * pixel_size - 3.5;
 
-			ray_dir = vector(w_x,w_y,w_z);
+			ray_dir = vector(w_x,w_y,w_z - (-5));
 			ray = new_ray(eye_pos,ray_dir);
 
 			// GETTING INTERSECTIONS OF SPHERES WITH RAY IN THAT EXACT POINT
@@ -152,25 +155,35 @@ void	render(t_canvas *canvas)
 
 			if (hit)
 			{
+				// FINDING POSITION WHERE RAY INTERSECTED THE SPHERE
+
 				it_pos = position(ray,hit->times[0]);
-				normal = normal_at(hit->s,it_pos);
-				eye_vec = vector(0,0,-1);
-				reflect_vec = reflect(ray->direction,normal);
-				light_vec = tuples_operation(light_pos,it_pos,SUB);
 
+				// EYE VECTOR SHOWING FROM IT_POS TO CAMERA OR JUST WE CAN NEGATE THE DIRECTION VEC OF RAY
 
+				eye_vec = tuple_operation(ray->direction,NEG,0);
 				
-				my_pixel_put(j,i,canvas->image,hit->s->color);
-				hit->s->m = material(0.1,0.9,0.9,200);
-				hit->s->m->color = hit->s->color;
+				// LIGHT VECTOR SHOWING FROM LIGHT SOURCE TO INTERSECTION POSITION
 
+				// SURFACE NORMAL IS A VECTOR SHOWING THE PEREPENDICULAR TO THAT SHPHERE IN THAT POINT
+				// WEE NEED TO TRANSFORM NORMAL IF WE TRANSFORMED OUR OBJECT
+
+				normal = normal_at(hit->s,it_pos);
+
+				// REFLECTION VECTOR VECTOR DEFINED 
+
+				// FINDING COLOR IN THAT EXACT POINT
+
+				color = lighting(hit->s->m,light,it_pos,eye_vec,normal);
+
+				// PUTTING THAT COLOR IN SCREEN
+				
+				my_pixel_put(j,i,canvas->image,color);
+				
 
 				// FREEING MEMORY OF LIGHTS
-				free(hit->s->m);
-				free(reflect_vec);
 				free(normal);
 				free(it_pos);
-				free(light_vec);
 				free(eye_vec);
 			}
 			// FREEING THIS RAY 
@@ -179,12 +192,14 @@ void	render(t_canvas *canvas)
 
 			// FREEING ALL INTERSECTIONS FOR THIS POINT HIT WILL BE FREED WITH THAT
 			free_intersections(inter);
-
+			
 		}
 	}
 
 	// FREEING ALL THE MEMORY
-	free(light_pos);
+	free(light->intens);
+	free(light->pos);
+	free(light);
 	free(eye_pos);
 	free_spheres(sphere);
 }

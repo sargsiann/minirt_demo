@@ -57,7 +57,7 @@ typedef	struct s_light
 
 typedef	struct s_material
 {
-	t_color	*color;
+	tuple	*color;
 	float	ambient;
 	float	diffuse;
 	float	specular;
@@ -80,7 +80,6 @@ typedef struct s_sphere
 	char				t_type;
 	float				r;
 	char				id;
-	int					color;
 	t_material			*m;
 	struct	s_sphere	*next;
 }	t_sphere;
@@ -177,9 +176,10 @@ tuple	*point(float x, float y, float z);
 tuple	*vector(float x, float y, float z);
 
 // CANVAS
+t_color	*new_color(unsigned char r, unsigned char g, unsigned char b);
 void	init_canvas(t_canvas *canvas);
 void	my_pixel_put(int x, int y, t_image *image, int color);
-int		rgb_to_color(short r, short g, short b);
+int		rgb_to_color(t_color *color);
 t_color	*colors_operation(t_color c1, t_color t2, char operation);\
 void	put_square(int x, int y, t_image *image, int color);
 
@@ -220,8 +220,11 @@ void		set_transform(t_sphere **s,float **t,char type);
 
 // LIGHTS
 
-tuple *normal_at(void *object,tuple *point);
-tuple	*reflect(tuple *in, tuple *normal);
+tuple 		*normal_at(void *object,tuple *point);
+tuple		*reflect(tuple *in, tuple *normal);
 t_material	*material(float ambient, float diffuse, float specular, float shininess);
+t_light		*new_light();
+int			lighting(t_material *m, t_light *l, tuple *it_point, tuple	*eye_v,tuple *normal);
+
 
 #endif

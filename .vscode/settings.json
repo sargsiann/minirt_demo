@@ -7,6 +7,21 @@
 		"lib.h": "c",
 		"random": "c",
 		"math.h": "c",
-		"vector": "c"
+		"vector": "c",
+		"*.tcc": "c",
+		"cstdlib": "c",
+		"string": "c",
+		"exception": "c",
+		"memory_resource": "c",
+		"cmath": "c",
+		"new": "c",
+		"numeric": "c",
+		"ostream": "c",
+		"string_view": "c",
+		"tuple": "c",
+		"type_traits": "c",
+		"typeinfo": "c",
+		"utility": "c",
+		"algorithm": "c"
 	}
 }

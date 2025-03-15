@@ -26,12 +26,13 @@ void *tuple_operation(tuple *t1, int operation, float scalar)
 		*fl_res = sqrt(t1->x * t1->x + t1->y * t1->y + t1->z * t1->z);
 		return (fl_res);
 	}
+	free(fl_res);
 	res = malloc(sizeof(tuple));
-	if (!res)
-		return (NULL);
 	if (operation == NEG)
 	{
-		res = vector(-t1->x, -t1->y, -t1->z);
+		res->x = t1->x * -1;
+		res->y = t1->y * -1;
+		res->z = t1->z * -1;
 	}
 	if (operation == MUL)
 	{
@@ -50,7 +51,6 @@ void *tuple_operation(tuple *t1, int operation, float scalar)
 		float mag = *(float *)(tuple_operation(t1, MAG, 0));
 		res = vector(t1->x / mag, t1->y / mag, t1->z / mag);
 	}
-	free(fl_res);
 	return (res);
 }
 

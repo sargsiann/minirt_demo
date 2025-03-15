@@ -35,6 +35,8 @@ void	free_spheres(t_sphere *s)
 			free(tmp->center);
 		if (tmp->transform)
 			free_matrix(tmp->transform,4);
+		free(tmp->m->color);
+		free(tmp->m);
 		free(tmp);
 	}
 	free(s);
@@ -68,7 +70,6 @@ void	print_spheres(t_sphere *s)
 		printf("center: ");
 		print_tuple(s->center);
 		printf("radius: %.2f\n", s->r);
-		printf("color: %d\n", s->color);
 		s = s->next;
 		printf("--------------------\n");
 	}
