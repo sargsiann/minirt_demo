@@ -118,6 +118,7 @@ void	render(t_canvas *canvas)
 	tuple	*it_pos = NULL;
 	tuple	*normal = NULL;
 	tuple	*eye_vec = NULL;
+	tuple	*tmp;
 
 	t_material *m;
 
@@ -126,17 +127,27 @@ void	render(t_canvas *canvas)
 	pixel_size = 7.0 / 300;
 	w_x = 0;
 	w_y = 0;
-	w_z = 10;
+	w_z = 20;
 
 
 	sphere = new_sphere(1);
 	sphere->m = material(0.1,0.9,0.9,20);
-	sphere->m->color = point(255,0,0);
+	set_transform(&sphere,new_translation(-2,0,0),TRSL);
+	sphere->m->color = point(255,255,255);
+
+	t_sphere	*sphere2 = new_sphere(2);
+	sphere2->m = material(0.1,0.9,1,10);
+	sphere2->m->color = point(255,255,0);
+	
+	sphere->next = sphere2;
+	// set_transform(&sphere2,new_scale(1,0.5,0.5),SCALE);
+	// set_transform(&sphere2,new_translation(),TRSL);
 
 	light = new_light();
-	eye_pos = point(0,0,-5);
+	eye_pos = point(0,0,-20);
 
-	light->pos = point(-4,2, -4);
+	light->pos = point(-4,1,-4);
+	light->intens = point(1,1,1);
 	
 	for (int i = 0; i<300; i++)
 	{
@@ -145,7 +156,10 @@ void	render(t_canvas *canvas)
 		{
 			w_x = j * pixel_size - 3.5;
 
-			ray_dir = vector(w_x,w_y,w_z - (-5));
+			tmp = point(w_x,w_y,(w_z - (-20)));
+			ray_dir = tuple_operation(tmp,NORM,0);
+
+			free(tmp);
 			ray = new_ray(eye_pos,ray_dir);
 
 			// GETTING INTERSECTIONS OF SPHERES WITH RAY IN THAT EXACT POINT
@@ -173,6 +187,7 @@ void	render(t_canvas *canvas)
 				// REFLECTION VECTOR VECTOR DEFINED 
 
 				// FINDING COLOR IN THAT EXACT POINT
+
 
 				color = lighting(hit->s->m,light,it_pos,eye_vec,normal);
 
@@ -202,7 +217,11 @@ void	render(t_canvas *canvas)
 	free(light);
 	free(eye_pos);
 	free_spheres(sphere);
+	mlx_put_image_to_window(canvas->mlx, canvas->win, canvas->image->img_ptr, 0, 0);
 }
+
+
+
 
 void	init_canvas(t_canvas *canvas)
 {
@@ -218,4 +237,5 @@ void	init_canvas(t_canvas *canvas)
 	mlx_mouse_hook(canvas->win,mouse_hook,canvas);
 	mlx_key_hook(canvas->win,key_hook,NULL);
 	mlx_loop(canvas->mlx);
+	mlx_loop_hook(canvas->mlx,loop_hook,canvas);
 }

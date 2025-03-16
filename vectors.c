@@ -49,7 +49,9 @@ void *tuple_operation(tuple *t1, int operation, float scalar)
 	if (operation == NORM)
 	{
 		float mag = *(float *)(tuple_operation(t1, MAG, 0));
-		res = vector(t1->x / mag, t1->y / mag, t1->z / mag);
+		res->x = t1->x / mag;
+		res->y = t1->y / mag;
+		res->z = t1->z / mag;
 	}
 	return (res);
 }

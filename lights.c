@@ -7,6 +7,7 @@ tuple	*normal_at(void	*object,tuple	*point)
 	float	**point_matrix;
 	tuple	*object_normal;
 	tuple	*world_normal;
+	tuple	*tmp;
 	float	**I;
 
 	sphere = (t_sphere *)object;
@@ -26,13 +27,14 @@ tuple	*normal_at(void	*object,tuple	*point)
 	point_matrix = tuple_to_mx(object_normal);
 	world_normal = mx_to_tuple(matrix_mul(I,point_matrix,4,1,false,true),true);
 
-
 	// FREES
 	free(object_normal);
 	free(object_point);
 	free_matrix(I,4);
 	
-	return (world_normal);
+	tmp = tuple_operation(world_normal,NORM,0);
+
+	return (tmp);
 }
 
 tuple	*reflect(tuple *in, tuple *normal)
@@ -103,6 +105,8 @@ int	lighting(t_material *m, t_light *l, tuple *it_point, tuple	*eye_v,tuple *nor
 	ambient = tuple_operation(effective_color,MUL,m->ambient);
 
 	// FINDING WHETER LIGHT REFLECT THE EYE SIDE OR NOT
+	tmp = tuple_operation(light_v,NEG,0);
+
 	light_dot_normal = tuples_operation(normal,light_v,SCL_MUL);
 
 	// IF THE LIGHT IS ON OTHER SIDE
@@ -116,38 +120,44 @@ int	lighting(t_material *m, t_light *l, tuple *it_point, tuple	*eye_v,tuple *nor
 	{
 		// ELSE FINDING THE DIFFUSE 
 		diffuse = tuple_operation(effective_color,MUL, *light_dot_normal * m->diffuse);
-		
-		// CHECKING THE BRIGHTNESS OF "БЛИК"
-		tmp  = tuple_operation(light_v,NEG,0);
-		reflect_v = reflect(tmp,normal);
-		
-		free(tmp);
 
+		print_tuple(diffuse);
+
+		reflect_v = reflect(tmp,normal);
 		reflect_dot_eye = tuples_operation(reflect_v,eye_v,SCL_MUL);
-		if (*reflect_dot_eye <= 0){
+		
+		
+		if (*reflect_dot_eye < 0){
 			specular = point(0,0,0);
 		}
 		else
 		{
 			factor = pow(*reflect_dot_eye, m->shininess);
-			specular = tuple_operation(l->intens,MUL,factor * m->specular);
+			// MULTIPLYING BY 255 FOR GETTING LIGHT COLOR NOT THE INTENST
+			specular = tuple_operation(l->intens,MUL,m->specular * factor * 255);	
 		}
+		free(reflect_dot_eye);
 	}
 	tmp = tuples_operation(ambient,diffuse,ADD);
-	tuple	*final_color = tuples_operation(tmp,point(0,0,0),ADD);
+	tuple	*final_color = tuples_operation(tmp,specular,ADD);
 	
-	int color = (clamp(final_color->x, 0, 255) << 16) |
-            (clamp(final_color->y, 0, 255) << 8) |
-             clamp(final_color->z, 0, 255);
+	// FIXING EDGES FOR NOT GOING ALONG AND MAKE BLACK
 
-	// int color = (int)final_color->x << 16 | (int)final_color->y << 8 | (int)final_color->z;
-	// FREE
-	// free(reflect_dot_eye);
+	final_color->x = clamp((int)final_color->x,0,255);
+	final_color->y = clamp((int)final_color->y,0,255);
+	final_color->z = clamp((int)final_color->z,0,255);
+
+	free(tmp);
+
+
+	int color = (int)final_color->x << 16 | (int)final_color->y << 8 | (int)final_color->z;
+	
 	free(diffuse);
 	free(light_dot_normal);
 	free(ambient);
 	free(effective_color);
 	free(light_v);
+	
 	return (color);
 }
 
