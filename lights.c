@@ -67,6 +67,12 @@ t_material	*material(float ambient, float diffuse, float specular, float shinine
 	return (m);
 }
 
+int clamp(int value, int min, int max) {
+    if (value < min) return min;  // Если меньше min — вернёт min
+    if (value > max) return max;  // Если больше max — вернёт max
+    return value;                 // Если внутри диапазона — вернёт value
+}
+
 int	lighting(t_material *m, t_light *l, tuple *it_point, tuple	*eye_v,tuple *normal)
 {
 	tuple	*effective_color;
@@ -114,6 +120,7 @@ int	lighting(t_material *m, t_light *l, tuple *it_point, tuple	*eye_v,tuple *nor
 		// CHECKING THE BRIGHTNESS OF "БЛИК"
 		tmp  = tuple_operation(light_v,NEG,0);
 		reflect_v = reflect(tmp,normal);
+		
 		free(tmp);
 
 		reflect_dot_eye = tuples_operation(reflect_v,eye_v,SCL_MUL);
@@ -127,10 +134,15 @@ int	lighting(t_material *m, t_light *l, tuple *it_point, tuple	*eye_v,tuple *nor
 		}
 	}
 	tmp = tuples_operation(ambient,diffuse,ADD);
-	tuple	*final_color = tuples_operation(tmp,specular,ADD); 
-	int color = (int)final_color->x >> 16 | (int)final_color->y >> 8 | (int)final_color->z;
+	tuple	*final_color = tuples_operation(tmp,point(0,0,0),ADD);
+	
+	int color = (clamp(final_color->x, 0, 255) << 16) |
+            (clamp(final_color->y, 0, 255) << 8) |
+             clamp(final_color->z, 0, 255);
+
+	// int color = (int)final_color->x << 16 | (int)final_color->y << 8 | (int)final_color->z;
 	// FREE
-	free(reflect_dot_eye);
+	// free(reflect_dot_eye);
 	free(diffuse);
 	free(light_dot_normal);
 	free(ambient);

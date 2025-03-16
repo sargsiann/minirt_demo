@@ -130,13 +130,13 @@ void	render(t_canvas *canvas)
 
 
 	sphere = new_sphere(1);
-	sphere->m = material(0.1,0.9,0.9,200);
+	sphere->m = material(0.1,0.9,0.9,20);
 	sphere->m->color = point(255,0,0);
 
 	light = new_light();
 	eye_pos = point(0,0,-5);
 
-	light->pos = point(0,0, 2);
+	light->pos = point(-4,2, -4);
 	
 	for (int i = 0; i<300; i++)
 	{
