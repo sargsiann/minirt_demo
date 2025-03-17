@@ -122,7 +122,20 @@ typedef	struct	s_word
 	t_canvas	*canvas;
 	t_ray		*ray;
 	t_intersect	*intersects;
+	t_intersect	*hit;
 	t_light		*light;
+	float		w_x,w_y,w_z;
+	float		wall_size;
+	float		pixel_size;
+	float		it_time;
+	int			color;
+	tuple	*eye_pos;
+	tuple	*ray_dir;
+	tuple	*it_pos ;
+	tuple	*normal ;
+	tuple	*eye_vec;
+	tuple	*tmp;
+
 }	t_word;
 
 

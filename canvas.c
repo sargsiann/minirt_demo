@@ -114,7 +114,7 @@ int loop_hook(void *param)
 }
 
 
-void	render(t_canvas *canvas)
+void	render(t_word	**word)
 {
 	float	w_x,w_y,w_z;
 	float	wall_size;
@@ -136,34 +136,34 @@ void	render(t_canvas *canvas)
 	tuple	*eye_vec = NULL;
 	tuple	*tmp;
 
-	t_material *m;
 
 
-	wall_size = 7.0;
-	pixel_size = 7.0 / 1000;
-	w_x = 0;
-	w_y = 0;
-	w_z = 10;
+	(*word)->wall_size = 7.0;
+	(*word)->pixel_size = 7.0 / 1000;
+	(*word)->w_x = 0;
+	(*word)->w_y = 0;
+	(*word)->w_z = 10;
 
 
-	sphere = new_sphere(1);
-	sphere->m = material(0.1,0.9,0.9,10);
-	sphere->m->color = point(255,0,0);
+	(*word)->spheres = new_sphere(1);
+	(*word)->spheres->m = material(0.1,0.9,0.9,10);
+	(*word)->spheres->m->color = point(255,0,0);
 
-	light = new_light();
-	eye_pos = point(0,0,-20);
+	(*word)->light = new_light();
+	(*word)->eye_pos = point(0,0,-20);
 	
 
-	light->pos = point(4,2,-10);
-	light->intens = point(1,1,1);
+	(*word)->light->pos = point(4,2,-10);
+	(*word)->light->intens = point(1,1,1);
 	
 	for (int i = 0; i<1000; i+=4)
 	{
-		w_y = 3.5 - pixel_size * i;
+		(*word)->w_y = 3.5 - (*word)->pixel_size * i;
 		for (int j = 0; j < 1000; j+=4)
 		{
-			w_x = j * pixel_size - 3.5;
+			(*word)->w_x = -3.5 + (*word)->pixel_size * j;
 
+			
 			tmp = point(w_x,w_y,(w_z - (-20)));
 			ray_dir = tuple_operation(tmp,NORM,0);
 
@@ -232,16 +232,21 @@ void	render(t_canvas *canvas)
 
 void	init_canvas(t_canvas *canvas)
 {
+	t_word *word;
+	word = malloc(sizeof(t_word));
+	if (!word)
+		exit(1);
 	canvas = malloc(sizeof(t_canvas));
 	if (!canvas)
 		exit(1);
+	word->canvas = canvas;
 	canvas->mlx = mlx_init();
 	canvas->win = mlx_new_window(canvas->mlx,1000,1000, "Minirt");
 	init_image(&canvas->image, canvas->mlx);
-	render(canvas);
+	render(word);
 	mlx_hook(canvas->win,17,0,close,NULL);
 	mlx_mouse_hook(canvas->win,mouse_hook,canvas);
-	mlx_key_hook(canvas->win,key_hook,NULL);
+	mlx_key_hook(canvas->win,key_hook,word);
 	mlx_loop_hook(canvas->mlx,loop_hook,canvas);
 	mlx_loop(canvas->mlx);
 }
