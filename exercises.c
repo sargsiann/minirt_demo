@@ -59,18 +59,4 @@ void	render(t_canvas *canvas)
 */
 
 
-// void	put_square(int x, int y, t_image *image, int color)
-// {
-// 	int i = 0;
-// 	int j = 0;
-// 	while (i < 5)
-// 	{
-// 		j = 0;
-// 		while (j < 5)
-// 		{
-// 			my_pixel_put(x + i, y  + j, image, color);
-// 			j++;
-// 		}
-// 		i++;
-// 	}
-// }
+

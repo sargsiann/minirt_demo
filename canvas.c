@@ -149,28 +149,10 @@ void	render(t_canvas *canvas)
 	sphere = new_sphere(1);
 	sphere->m = material(0.1,0.9,0.9,10);
 	sphere->m->color = point(255,0,0);
-	// set_transform(&sphere,new_rotation_z(PI/4),ROT);
-	// set_transform(&sphere,new_scale(1,0.5,1),SCALE);
-
-// 
-	// t_sphere	*sphere2 = new_sphere(2);
-	// sphere2->m = material(0.1,0.9,1,10);
-	// sphere2->m->color = point(255,0,255);
-	// set_transform(&sphere2,new_rotation_z(PI/4),ROT);
-	// set_transform(&sphere2,new_translation(-0.3,1,-1),TRSL);
-	// set_transform(&sphere2,new_scale(0.5,1,1),SCALE);
-	// set_transform(&sphere2,new_translation(-1,0,1),TRSL);
-
-	// set_transform(&sphere2, new_scale(0.5,0.5,0.5),SCALE);
-	// set_transform(&sphere,new_translation(-1,0,0),TRSL);
-// 
-	
-	// sphere->next = sphere2;
-	// set_transform(&sphere2, new_rotation_z(PI/4),ROT);
-	// // set_transform(&sphere2,new_scale(1,0.5,0.5),SCALE);
 
 	light = new_light();
 	eye_pos = point(0,0,-20);
+	
 
 	light->pos = point(4,2,-10);
 	light->intens = point(1,1,1);
@@ -257,10 +239,9 @@ void	init_canvas(t_canvas *canvas)
 	canvas->win = mlx_new_window(canvas->mlx,1000,1000, "Minirt");
 	init_image(&canvas->image, canvas->mlx);
 	render(canvas);
-	mlx_put_image_to_window(canvas->mlx, canvas->win, canvas->image->img_ptr, 0, 0);
 	mlx_hook(canvas->win,17,0,close,NULL);
 	mlx_mouse_hook(canvas->win,mouse_hook,canvas);
 	mlx_key_hook(canvas->win,key_hook,NULL);
-	mlx_loop(canvas->mlx);
 	mlx_loop_hook(canvas->mlx,loop_hook,canvas);
+	mlx_loop(canvas->mlx);
 }

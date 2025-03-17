@@ -47,6 +47,7 @@ typedef struct s_canvas t_canvas;
 typedef struct s_light t_light;
 typedef struct s_material t_material;
 typedef struct s_image t_image;
+typedef struct s_word t_word;
 
 
 typedef	struct s_light
@@ -114,6 +115,15 @@ typedef struct s_image
 	char		*addres;
 	void		*img_ptr;
 }	t_image;
+
+typedef	struct	s_word
+{
+	t_sphere	*spheres;
+	t_canvas	*canvas;
+	t_ray		*ray;
+	t_intersect	*intersects;
+	t_light		*light;
+}	t_word;
 
 
 typedef struct s_canvas
