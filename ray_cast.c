@@ -87,15 +87,15 @@ t_intersect	*intersect(t_ray *r, t_sphere *o)
 
 	inter->s = o;
 	inter->next = NULL;
-
-	free(a_ptr);
-	free(b_ptr);
-	free(c_ptr);
-	free(r2->origin);
-	free(r2->direction);
-	free(r2);
-	free_matrix(I, 4);
-
+	if (!I || !r2 || !a_ptr || !b_ptr || !c_ptr)
+	{
+		free(a_ptr);
+		free(b_ptr);
+		free(c_ptr);
+		free(r2);
+		free_matrix(I, 4);
+		return (NULL);
+	}
 	return (inter);
 }
 

@@ -124,7 +124,6 @@ int	key_hook(int key, void *param)
 		(*word)->eye_pos->z = -8;
 		render(word);
 	}
-	printf("%d\n",key);
 	mlx_put_image_to_window((*word)->canvas->mlx,(*word)->canvas->win,(*word)->canvas->image->img_ptr,0,0);
 }
 
@@ -132,10 +131,10 @@ void	put_square(int x, int y, t_image *image, int color)
 {
 	float i = 0;
 	float j = 0;
-	while (i < 7.5)
+	while (i < 15)
 	{
 		j = 0;
-		while (j < 7.5)
+		while (j < 15)
 		{
 			my_pixel_put(x + (int)i, y  + (int)j, image, color);
 			j++;
@@ -208,6 +207,8 @@ void	render(t_word	**word)
 
 	(*word)->spheres = new_sphere(1);
 	(*word)->spheres->m = material(0.1,0.9,0.9,10);
+	set_transform(&(*word)->spheres,new_rotation_z(PI/4),ROT);
+	set_transform(&(*word)->spheres,new_scale(1,0.5,1),SCALE);
 	(*word)->spheres->m->color = point(255,0,0);
 
 	(*word)->light = new_light();
@@ -218,10 +219,10 @@ void	render(t_word	**word)
 	(*word)->light->pos = point(4,2,-10);
 	(*word)->light->intens = point(1,1,1);
 	
-	for (int i = 0; i<1000; i+=7.5)
+	for (int i = 0; i<1000; i+=12)
 	{
 		(*word)->w_y = 5 - (*word)->pixel_size * i;
-		for (int j = 0; j < 1000; j+=7.5)
+		for (int j = 0; j < 1000; j+=12)
 		{
 			(*word)->w_x = -5 + (*word)->pixel_size * j;
 
@@ -244,7 +245,7 @@ void	render(t_word	**word)
 				(*word)->eye_vec = tuple_operation((*word)->ray->direction,MUL,-1);
 				(*word)->color = lighting((*word)->spheres->m,(*word)->light,(*word)->it_pos,(*word)->eye_vec,(*word)->normal);
 				
-				put_square(j, i, (*word)->canvas->image, (*word)->color);
+				put_square(i,j,(*word)->canvas->image,(*word)->color);
 				free((*word)->it_pos);
 				free((*word)->normal);
 				free((*word)->eye_vec);

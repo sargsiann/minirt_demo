@@ -38,6 +38,8 @@
 # define DEF_SPECULAR 0.9
 # define DEF_SHININESS 200
 
+# define THREAD_COUNT 8
+
 
 
 # include "mlx.h"
@@ -59,7 +61,16 @@ typedef struct s_light t_light;
 typedef struct s_material t_material;
 typedef struct s_image t_image;
 typedef struct s_word t_word;
+typedef	struct s_thread_data t_thread_data;
 
+
+
+typedef	struct s_thread_data
+{
+	t_word	**word;
+	int		start;
+	int		end;
+}	t_thread_data;
 
 typedef	struct s_light
 {
