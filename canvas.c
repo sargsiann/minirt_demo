@@ -61,6 +61,22 @@ t_color	*colors_operation(t_color c1, t_color t2, char operation)
 	return (res);
 }
 
+void	put_square(int x, int y, t_image *image, int color)
+{
+	int i = 0;
+	int j = 0;
+	while (i < 4)
+	{
+		j = 0;
+		while (j < 4)
+		{
+			my_pixel_put(x + i, y  + j, image, color);
+			j++;
+		}
+		i++;
+	}
+}
+
 int		rgb_to_color(t_color	*color)
 {
 	return (color->r << 16 | color->g << 8 | color->b << 0);
@@ -86,7 +102,7 @@ void	init_image(t_image **img, void *mlx)
 	*img = malloc(sizeof(t_image));
 	if (!*img)
 		exit(1);
-	(*img)->img_ptr = mlx_new_image(mlx,300,300);
+	(*img)->img_ptr = mlx_new_image(mlx,1000,1000);
 	(*img)->addres = mlx_get_data_addr((*img)->img_ptr,
 		&(*img)->bpp, &(*img)->line, &(*img)->endian);
 }
@@ -124,35 +140,45 @@ void	render(t_canvas *canvas)
 
 
 	wall_size = 7.0;
-	pixel_size = 7.0 / 300;
+	pixel_size = 7.0 / 1000;
 	w_x = 0;
 	w_y = 0;
-	w_z = 20;
+	w_z = 10;
 
 
 	sphere = new_sphere(1);
-	sphere->m = material(0.1,0.9,0.9,20);
-	set_transform(&sphere,new_translation(-2,0,0),TRSL);
-	sphere->m->color = point(255,255,255);
+	sphere->m = material(0.1,0.9,0.9,10);
+	sphere->m->color = point(255,0,0);
+	// set_transform(&sphere,new_rotation_z(PI/4),ROT);
+	// set_transform(&sphere,new_scale(1,0.5,1),SCALE);
 
-	t_sphere	*sphere2 = new_sphere(2);
-	sphere2->m = material(0.1,0.9,1,10);
-	sphere2->m->color = point(255,255,0);
+// 
+	// t_sphere	*sphere2 = new_sphere(2);
+	// sphere2->m = material(0.1,0.9,1,10);
+	// sphere2->m->color = point(255,0,255);
+	// set_transform(&sphere2,new_rotation_z(PI/4),ROT);
+	// set_transform(&sphere2,new_translation(-0.3,1,-1),TRSL);
+	// set_transform(&sphere2,new_scale(0.5,1,1),SCALE);
+	// set_transform(&sphere2,new_translation(-1,0,1),TRSL);
+
+	// set_transform(&sphere2, new_scale(0.5,0.5,0.5),SCALE);
+	// set_transform(&sphere,new_translation(-1,0,0),TRSL);
+// 
 	
-	sphere->next = sphere2;
-	// set_transform(&sphere2,new_scale(1,0.5,0.5),SCALE);
-	// set_transform(&sphere2,new_translation(),TRSL);
+	// sphere->next = sphere2;
+	// set_transform(&sphere2, new_rotation_z(PI/4),ROT);
+	// // set_transform(&sphere2,new_scale(1,0.5,0.5),SCALE);
 
 	light = new_light();
 	eye_pos = point(0,0,-20);
 
-	light->pos = point(-4,1,-4);
+	light->pos = point(4,2,-10);
 	light->intens = point(1,1,1);
 	
-	for (int i = 0; i<300; i++)
+	for (int i = 0; i<1000; i+=4)
 	{
 		w_y = 3.5 - pixel_size * i;
-		for (int j = 0; j < 300; j++)
+		for (int j = 0; j < 1000; j+=4)
 		{
 			w_x = j * pixel_size - 3.5;
 
@@ -193,8 +219,7 @@ void	render(t_canvas *canvas)
 
 				// PUTTING THAT COLOR IN SCREEN
 				
-				my_pixel_put(j,i,canvas->image,color);
-				
+				put_square(j,i,canvas->image,color);
 
 				// FREEING MEMORY OF LIGHTS
 				free(normal);
@@ -229,7 +254,7 @@ void	init_canvas(t_canvas *canvas)
 	if (!canvas)
 		exit(1);
 	canvas->mlx = mlx_init();
-	canvas->win = mlx_new_window(canvas->mlx,300,300, "Minirt");
+	canvas->win = mlx_new_window(canvas->mlx,1000,1000, "Minirt");
 	init_image(&canvas->image, canvas->mlx);
 	render(canvas);
 	mlx_put_image_to_window(canvas->mlx, canvas->win, canvas->image->img_ptr, 0, 0);
