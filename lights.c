@@ -118,7 +118,8 @@ int	lighting(t_material *m, t_light *l, tuple *it_point, tuple	*eye_v,tuple *nor
 	}
 	else
 	{
-		// ELSE FINDING THE DIFFUSE 
+		// ELSE FINDING THE DIFFUSE
+		
 		diffuse = tuple_operation(effective_color,MUL, *light_dot_normal * m->diffuse);
 		reflect_v = reflect(tmp,normal);
 		reflect_dot_eye = tuples_operation(reflect_v,eye_v,SCL_MUL);

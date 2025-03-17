@@ -3,6 +3,7 @@
 // INITING MUTEX FOR ONE AT ONCE ACCESING SAME MEMORY
 
 void render(t_word	**word);
+void	black_image(t_image *img);
 
 int	close(int s)
 {
@@ -10,35 +11,133 @@ int	close(int s)
 }
 
 
+void rotate_x(t_word **word, double angle)
+{
+	double y = (*word)->eye_pos->y;
+	double z = (*word)->eye_pos->z;
+
+	(*word)->eye_pos->y = y * cos(angle) - z * sin(angle);
+	(*word)->eye_pos->z = y * sin(angle) + z * cos(angle);
+}
+
+void rotate_y(t_word **word, double angle)
+{
+	double x = (*word)->eye_pos->x;
+	double z = (*word)->eye_pos->z;
+
+	(*word)->eye_pos->x = x * cos(angle) + z * sin(angle);
+	(*word)->eye_pos->z = -x * sin(angle) + z * cos(angle);
+}
+
+void rotate_z(t_word **word, double angle)
+{
+	double x = (*word)->eye_pos->x;
+	double y = (*word)->eye_pos->y;
+
+	(*word)->eye_pos->x = x * cos(angle) - y * sin(angle);
+	(*word)->eye_pos->y = x * sin(angle) + y * cos(angle);
+}
+
+
+
 int	key_hook(int key, void *param)
 {
 	t_word **word = param;
 	if (key == ESC)
 		close(0);
-	if (key == 32)
-	{
-		render(word);
-	}
 	if (key == UP)
 	{
-		(*word)->eye_pos->y += 1;
+		black_image((*word)->canvas->image);
+		(*word)->eye_pos->y -= 0.5;
+		render(word);
 	}
 	if (key == DOWN)
 	{
-		(*word)->eye_pos->y -= 1;
+		black_image((*word)->canvas->image);
+		(*word)->eye_pos->y += 0.5;
+		render(word);
 	}
+	if (key == LEFT)
+	{
+		black_image((*word)->canvas->image);
+		(*word)->eye_pos->x += 0.5;
+		render(word);
+	}
+	if (key == RIGHT)
+	{
+		black_image((*word)->canvas->image);
+		(*word)->eye_pos->x -= 0.5;
+		render(word);
+	}
+	if (key == 65451)
+	{
+		black_image((*word)->canvas->image);
+		(*word)->eye_pos->z += 0.5;
+		render(word);
+	}
+	if (key == 65453)
+	{
+		black_image((*word)->canvas->image);
+		(*word)->eye_pos->z -= 0.5;
+		render(word);
+	}
+	if (key == ROT_UP_X)
+	{
+		black_image((*word)->canvas->image);
+		rotate_x(word, 0.1);
+		render(word);
+	}
+	if (key == ROT_DOWN_X)
+	{
+		black_image((*word)->canvas->image);
+		rotate_x(word, -0.1);
+		render(word);
+	}
+	if (key == ROT_UP_Y)
+	{
+		black_image((*word)->canvas->image);
+		rotate_y(word, 0.1);
+		render(word);
+	}
+	if (key == ROT_DOWN_Y)
+	{
+		black_image((*word)->canvas->image);
+		rotate_y(word, -0.1);
+		render(word);
+	}
+	if (key == ROT_UP_Z)
+	{
+		black_image((*word)->canvas->image);
+		rotate_z(word, 0.1);
+		render(word);
+	}
+	if (key == ROT_DOWN_Z)
+	{
+		black_image((*word)->canvas->image);
+		rotate_z(word, -0.1);
+		render(word);
+	}
+	if (key == 114){
+		black_image((*word)->canvas->image);
+		(*word)->eye_pos->x = 0;
+		(*word)->eye_pos->y = 0;
+		(*word)->eye_pos->z = -8;
+		render(word);
+	}
+	printf("%d\n",key);
+	mlx_put_image_to_window((*word)->canvas->mlx,(*word)->canvas->win,(*word)->canvas->image->img_ptr,0,0);
 }
 
 void	put_square(int x, int y, t_image *image, int color)
 {
-	int i = 0;
-	int j = 0;
-	while (i < 4)
+	float i = 0;
+	float j = 0;
+	while (i < 7.5)
 	{
 		j = 0;
-		while (j < 4)
+		while (j < 7.5)
 		{
-			my_pixel_put(x + i, y  + j, image, color);
+			my_pixel_put(x + (int)i, y  + (int)j, image, color);
 			j++;
 		}
 		i++;
@@ -109,20 +208,20 @@ void	render(t_word	**word)
 
 	(*word)->spheres = new_sphere(1);
 	(*word)->spheres->m = material(0.1,0.9,0.9,10);
-	set_transform(&(*word)->spheres,new_scale(2,2,2),SCALE);
 	(*word)->spheres->m->color = point(255,0,0);
 
 	(*word)->light = new_light();
-	(*word)->eye_pos = point(0,0,-8);
+	if (!(*word)->eye_pos)
+		(*word)->eye_pos = point(0,0,-8);
 	
 
 	(*word)->light->pos = point(4,2,-10);
 	(*word)->light->intens = point(1,1,1);
 	
-	for (int i = 0; i<1; i+=4)
+	for (int i = 0; i<1000; i+=7.5)
 	{
 		(*word)->w_y = 5 - (*word)->pixel_size * i;
-		for (int j = 0; j < 1; j+=4)
+		for (int j = 0; j < 1000; j+=7.5)
 		{
 			(*word)->w_x = -5 + (*word)->pixel_size * j;
 
@@ -158,7 +257,7 @@ void	render(t_word	**word)
 	free((*word)->light->intens);
 	free((*word)->light->pos);
 	free((*word)->light);
-	free((*word)->eye_pos);
+	// free((*word)->eye_pos);
 	free_spheres((*word)->spheres);
 }
 
@@ -178,9 +277,8 @@ void	init_canvas(t_canvas *canvas)
 	canvas->win = mlx_new_window(canvas->mlx,1000,1000, "Minirt");
 	init_image(&canvas->image, canvas->mlx);
 	render(&word);
+	mlx_put_image_to_window(canvas->mlx,canvas->win,canvas->image->img_ptr,0,0);
 	mlx_hook(canvas->win,17,0,close,NULL);
-	mlx_mouse_hook(canvas->win,mouse_hook,canvas);
-	mlx_key_hook(word->canvas->win,key_hook,&word);
-	mlx_loop_hook(word->canvas->mlx,loop_hook,&word);
+	mlx_key_hook(canvas->win,key_hook,&word);
 	mlx_loop(canvas->mlx);
 }

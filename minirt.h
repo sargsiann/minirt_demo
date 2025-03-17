@@ -25,6 +25,13 @@
 # define LEFT 65361
 # define UP 65362
 # define DOWN 65364
+# define ROT_UP_X 119
+# define ROT_DOWN_X 115
+# define ROT_UP_Y 97
+# define ROT_DOWN_Y 100
+# define ROT_UP_Z 113
+# define ROT_DOWN_Z 101
+
 # define MAX_DIR_VIS_TIME 1601
 # define DEF_AMBIENT 0.1
 # define DEF_DIFFUSE 0.9
