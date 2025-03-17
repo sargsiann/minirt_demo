@@ -21,6 +21,10 @@
 # define ROT 13
 # define IDM 14
 # define ESC 65307
+# define RIGHT 65363
+# define LEFT 65361
+# define UP 65362
+# define DOWN 65364
 # define MAX_DIR_VIS_TIME 1601
 # define DEF_AMBIENT 0.1
 # define DEF_DIFFUSE 0.9
@@ -129,12 +133,12 @@ typedef	struct	s_word
 	float		pixel_size;
 	float		it_time;
 	int			color;
-	tuple	*eye_pos;
-	tuple	*ray_dir;
-	tuple	*it_pos ;
-	tuple	*normal ;
-	tuple	*eye_vec;
-	tuple	*tmp;
+	tuple		*eye_pos;
+	tuple		*ray_dir;
+	tuple		*it_pos ;
+	tuple		*normal ;
+	tuple		*eye_vec;
+	tuple		*tmp;
 
 }	t_word;
 

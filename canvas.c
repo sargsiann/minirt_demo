@@ -2,63 +2,31 @@
 
 // INITING MUTEX FOR ONE AT ONCE ACCESING SAME MEMORY
 
+void render(t_word	**word);
 
 int	close(int s)
 {
 	exit(s);
 }
 
-t_color	*new_color(unsigned char r, unsigned char g, unsigned char b)
-{
-	t_color *color;
-
-	color = malloc(sizeof(t_color));
-	if (!color)
-		exit(1);
-	color->r = r;
-	color->g = g;
-	color->b = b;
-	return (color);
-}
 
 int	key_hook(int key, void *param)
 {
+	t_word **word = param;
 	if (key == ESC)
 		close(0);
-}
-
-t_color	*colors_operation(t_color c1, t_color t2, char operation)
-{
-	t_color *res;
-
-	res = malloc(sizeof(t_color));
-	if (!res)
-		exit(1);
-	if (operation == ADD)
+	if (key == 32)
 	{
-		res->r = c1.r + t2.r;
-		res->g = c1.g + t2.g;
-		res->b = c1.b + t2.b;
+		render(word);
 	}
-	else if (operation == SUB)
+	if (key == UP)
 	{
-		res->r = c1.r - t2.r;
-		res->g = c1.g - t2.g;
-		res->b = c1.b - t2.b;
+		(*word)->eye_pos->y += 1;
 	}
-	else if (operation == MUL)
+	if (key == DOWN)
 	{
-		res->r = c1.r * t2.r;
-		res->g = c1.g * t2.g;
-		res->b = c1.b * t2.b;
+		(*word)->eye_pos->y -= 1;
 	}
-	else if (operation == DIV)
-	{
-		res->r = c1.r / t2.r;
-		res->g = c1.g / t2.g;
-		res->b = c1.b / t2.b;
-	}
-	return (res);
 }
 
 void	put_square(int x, int y, t_image *image, int color)
@@ -85,7 +53,7 @@ int		rgb_to_color(t_color	*color)
 
 void	my_pixel_put(int x, int y, t_image *image, int color)
 {
-	if (x < 0 || x >= 1080 || y < 0 || y >= 720)
+	if (x < 0 || x >= 1000 || y < 0 || y >= 1000)
 		return ;
 	char *addr = image->addres + x * (image->bpp / 8) + y * image->line;
 	*(unsigned int *)addr = color;
@@ -107,126 +75,92 @@ void	init_image(t_image **img, void *mlx)
 		&(*img)->bpp, &(*img)->line, &(*img)->endian);
 }
 
+void	black_image(t_image *img)
+{
+	int i = 0;
+	int j = 0;
+	while (i < 1000)
+	{
+		j = 0;
+		while (j < 1000)
+		{
+			my_pixel_put(i, j, img, 0);
+			j++;
+		}
+		i++;
+	}
+}
+
 int loop_hook(void *param)
 {
-	t_canvas *canvas = param;
-	mlx_put_image_to_window(canvas->mlx, canvas->win, canvas->image->img_ptr, 0, 0);
+	t_word	**word = param;
+	mlx_put_image_to_window((*word)->canvas->mlx,(*word)->canvas->win,(*word)->canvas->image->img_ptr,0,0);
 }
 
 
 void	render(t_word	**word)
 {
-	float	w_x,w_y,w_z;
-	float	wall_size;
-	float	pixel_size;
-	float	it_time;
-	int		color;
-
-
-	t_light	*light;
-	t_ray *ray;
-	t_sphere *sphere;
-	t_intersect *inter;
-	t_intersect	*hit;
-
-	tuple	*eye_pos = NULL;
-	tuple	*ray_dir ;
-	tuple	*it_pos = NULL;
-	tuple	*normal = NULL;
-	tuple	*eye_vec = NULL;
-	tuple	*tmp;
-
-
-
-	(*word)->wall_size = 7.0;
-	(*word)->pixel_size = 7.0 / 1000;
+	(*word)->wall_size = 10.0;
+	(*word)->pixel_size = 10.0 / 1000;
 	(*word)->w_x = 0;
 	(*word)->w_y = 0;
-	(*word)->w_z = 10;
+	(*word)->w_z = 14;
 
 
 	(*word)->spheres = new_sphere(1);
 	(*word)->spheres->m = material(0.1,0.9,0.9,10);
+	set_transform(&(*word)->spheres,new_scale(2,2,2),SCALE);
 	(*word)->spheres->m->color = point(255,0,0);
 
 	(*word)->light = new_light();
-	(*word)->eye_pos = point(0,0,-20);
+	(*word)->eye_pos = point(0,0,-8);
 	
 
 	(*word)->light->pos = point(4,2,-10);
 	(*word)->light->intens = point(1,1,1);
 	
-	for (int i = 0; i<1000; i+=4)
+	for (int i = 0; i<1; i+=4)
 	{
-		(*word)->w_y = 3.5 - (*word)->pixel_size * i;
-		for (int j = 0; j < 1000; j+=4)
+		(*word)->w_y = 5 - (*word)->pixel_size * i;
+		for (int j = 0; j < 1; j+=4)
 		{
-			(*word)->w_x = -3.5 + (*word)->pixel_size * j;
+			(*word)->w_x = -5 + (*word)->pixel_size * j;
+
+
+			(*word)->tmp = point((*word)->w_x,(*word)->w_y,(*word)->w_z);
+			(*word)->ray_dir = tuple_operation((*word)->tmp,NORM,0);
+			
+			free((*word)->tmp);
+			(*word)->ray = new_ray((*word)->eye_pos,(*word)->ray_dir);
+			
+			(*word)->intersects = get_sphere_intersections((*word)->spheres,(*word)->ray);
+			(*word)->hit = find_hit((*word)->intersects);
 
 			
-			tmp = point(w_x,w_y,(w_z - (-20)));
-			ray_dir = tuple_operation(tmp,NORM,0);
-
-			free(tmp);
-			ray = new_ray(eye_pos,ray_dir);
-
-			// GETTING INTERSECTIONS OF SPHERES WITH RAY IN THAT EXACT POINT
-
-			inter = get_sphere_intersections(sphere,ray);
-			hit = find_hit(inter);
-
-			if (hit)
+			if ((*word)->hit)
 			{
-				// FINDING POSITION WHERE RAY INTERSECTED THE SPHERE
-
-				it_pos = position(ray,hit->times[0]);
-
-				// EYE VECTOR SHOWING FROM IT_POS TO CAMERA OR JUST WE CAN NEGATE THE DIRECTION VEC OF RAY
-
-				eye_vec = tuple_operation(ray->direction,NEG,0);
 				
-				// LIGHT VECTOR SHOWING FROM LIGHT SOURCE TO INTERSECTION POSITION
-
-				// SURFACE NORMAL IS A VECTOR SHOWING THE PEREPENDICULAR TO THAT SHPHERE IN THAT POINT
-				// WEE NEED TO TRANSFORM NORMAL IF WE TRANSFORMED OUR OBJECT
-
-				normal = normal_at(hit->s,it_pos);
-
-				// REFLECTION VECTOR VECTOR DEFINED 
-
-				// FINDING COLOR IN THAT EXACT POINT
-
-
-				color = lighting(hit->s->m,light,it_pos,eye_vec,normal);
-
-				// PUTTING THAT COLOR IN SCREEN
+				(*word)->it_pos = position((*word)->ray,(*word)->hit->times[0]);
+				(*word)->normal = normal_at((*word)->spheres,(*word)->it_pos);
+				(*word)->eye_vec = tuple_operation((*word)->ray->direction,MUL,-1);
+				(*word)->color = lighting((*word)->spheres->m,(*word)->light,(*word)->it_pos,(*word)->eye_vec,(*word)->normal);
 				
-				put_square(j,i,canvas->image,color);
-
-				// FREEING MEMORY OF LIGHTS
-				free(normal);
-				free(it_pos);
-				free(eye_vec);
+				put_square(j, i, (*word)->canvas->image, (*word)->color);
+				free((*word)->it_pos);
+				free((*word)->normal);
+				free((*word)->eye_vec);
 			}
-			// FREEING THIS RAY 
-			free(ray_dir);
-			free(ray);
-
-			// FREEING ALL INTERSECTIONS FOR THIS POINT HIT WILL BE FREED WITH THAT
-			free_intersections(inter);
-			
+			free_intersections((*word)->intersects);
+			free((*word)->ray->direction);
+			free((*word)->ray);
 		}
 	}
-
-	// FREEING ALL THE MEMORY
-	free(light->intens);
-	free(light->pos);
-	free(light);
-	free(eye_pos);
-	free_spheres(sphere);
-	mlx_put_image_to_window(canvas->mlx, canvas->win, canvas->image->img_ptr, 0, 0);
+	free((*word)->light->intens);
+	free((*word)->light->pos);
+	free((*word)->light);
+	free((*word)->eye_pos);
+	free_spheres((*word)->spheres);
 }
-
 
 
 
@@ -243,10 +177,10 @@ void	init_canvas(t_canvas *canvas)
 	canvas->mlx = mlx_init();
 	canvas->win = mlx_new_window(canvas->mlx,1000,1000, "Minirt");
 	init_image(&canvas->image, canvas->mlx);
-	render(word);
+	render(&word);
 	mlx_hook(canvas->win,17,0,close,NULL);
 	mlx_mouse_hook(canvas->win,mouse_hook,canvas);
-	mlx_key_hook(canvas->win,key_hook,word);
-	mlx_loop_hook(canvas->mlx,loop_hook,canvas);
+	mlx_key_hook(word->canvas->win,key_hook,&word);
+	mlx_loop_hook(word->canvas->mlx,loop_hook,&word);
 	mlx_loop(canvas->mlx);
 }
