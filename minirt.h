@@ -32,6 +32,8 @@
 # define ROT_UP_Z 113
 # define ROT_DOWN_Z 101
 
+
+# define SMOOTHENESS 10
 # define MAX_DIR_VIS_TIME 1601
 # define DEF_AMBIENT 0.1
 # define DEF_DIFFUSE 0.9

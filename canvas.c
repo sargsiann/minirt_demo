@@ -131,12 +131,12 @@ void	put_square(int x, int y, t_image *image, int color)
 {
 	float i = 0;
 	float j = 0;
-	while (i < 15)
+	while (i < SMOOTHENESS)
 	{
 		j = 0;
-		while (j < 15)
+		while (j < SMOOTHENESS)
 		{
-			my_pixel_put(x + (int)i, y  + (int)j, image, color);
+			my_pixel_put(y + (int)j, x  + (int)i, image, color);
 			j++;
 		}
 		i++;
@@ -160,7 +160,6 @@ void	my_pixel_put(int x, int y, t_image *image, int color)
 int	mouse_hook(int b, int x, int y, void *param)
 {
 	t_canvas *canvas = param;
-	// put_square(x, y, canvas->image, rgb_to_color(255, 0, 0));
 }
 
 void	init_image(t_image **img, void *mlx)
@@ -206,23 +205,32 @@ void	render(t_word	**word)
 
 
 	(*word)->spheres = new_sphere(1);
-	(*word)->spheres->m = material(0.1,0.9,0.9,10);
-	set_transform(&(*word)->spheres,new_rotation_z(PI/4),ROT);
-	set_transform(&(*word)->spheres,new_scale(1,0.5,1),SCALE);
+	(*word)->spheres->m = material(0.9,0,0,0);
 	(*word)->spheres->m->color = point(255,0,0);
-
+	set_transform(&(*word)->spheres,new_scale(10,0.01,10),SCALE);
 	(*word)->light = new_light();
+
+	(*word)->spheres->next = new_sphere(2);
+	(*word)->spheres->next->m = material(0.1,0.9,0.9,20);
+	(*word)->spheres->next->m->color = point(255,0,0);
+	set_transform(&(*word)->spheres->next,new_translation(0,0,5),SCALE);
+	set_transform(&(*word)->spheres->next,new_rotation_y(PI/4),ROT);
+	set_transform(&(*word)->spheres->next,new_rotation_x(PI/2),ROT);
+	set_transform(&(*word)->spheres->next,new_scale(10,10,0.01),SCALE);
+
+
+	(*word)->spheres->next->next = NULL;
 	if (!(*word)->eye_pos)
 		(*word)->eye_pos = point(0,0,-8);
 	
 
-	(*word)->light->pos = point(4,2,-10);
+	(*word)->light->pos = point(-4,2,-10);
 	(*word)->light->intens = point(1,1,1);
 	
-	for (int i = 0; i<1000; i+=12)
+	for (int i = 0; i<1000; i+=SMOOTHENESS)
 	{
 		(*word)->w_y = 5 - (*word)->pixel_size * i;
-		for (int j = 0; j < 1000; j+=12)
+		for (int j = 0; j < 1000; j+=SMOOTHENESS)
 		{
 			(*word)->w_x = -5 + (*word)->pixel_size * j;
 
