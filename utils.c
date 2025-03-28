@@ -140,3 +140,19 @@ int	is_eq(float a, float b)
 {
 	return (a - b < EPSILON);
 }
+
+bool	is_inside(tuple **n, tuple *e_v){
+	float *dot;
+	tuple	*tmp;
+
+	dot = tuples_operation(*n,e_v,SCL_MUL);
+	if (*dot < 0)
+	{
+		tmp = vector(-(*n)->x,(*n)->y,(*n)->z);
+		free(*n);
+		free(dot);
+		*n = tmp;
+		return true;
+	}
+	return false;
+}

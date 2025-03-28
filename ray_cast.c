@@ -80,8 +80,7 @@ t_intersect	*intersect(t_ray *r, t_sphere *o)
 		inter->times[0] = (-b - sqrt(discriminant)) / (2 * a);
 		if (inter->count == 2)
 			inter->times[1] = (-b + sqrt(discriminant)) / (2 * a);
-
-		if (inter->count == 2 && inter->times[0] > inter->times[1])
+		if (inter->count == 2 && (inter->times[0] > inter->times[1] || inter->times[0] <= 0))
 			f_swap(&inter->times[0], &inter->times[1]);
 	}
 
@@ -184,6 +183,7 @@ t_sphere	*new_sphere(int id)
 	new->id = id;
 	new->transform = new_identity();
 	new->t_type = IDM;
+	new->next = NULL;
 	return (new);
 }
 

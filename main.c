@@ -148,9 +148,18 @@ int main()
 
 	// // print_intersection(i);
 	
+		// tuple *from = point(1,3,2);
+	// tuple *to = point(4,-2,8);
+	// tuple *up = vector(1,1,0);
+	// float **m = view_transform(from, to, up);
+
+	// print_matrix(m, 4, 4);
+
+
 	t_canvas	*canvas;
 
 	init_canvas(canvas);
 	
+
 	return (0);
 }

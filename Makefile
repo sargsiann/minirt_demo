@@ -15,7 +15,7 @@ OBJS = $(SRCS:.c=.o)
 %.o : %.c 
 	$(CC) $(MLX_COMP_FLAGS) -c $< -o $@
 
-all : $(NAME)
+all : $(NAME) Makefile minirt.h
 
 $(NAME) : Makefile minirt.h $(OBJS)
 	$(CC) $(OBJS) $(MLX_LNK_FLAGS) -o minirt

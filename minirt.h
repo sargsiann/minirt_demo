@@ -34,7 +34,7 @@
 
 
 # define SMOOTHENESS 10
-# define MAX_DIR_VIS_TIME 1601
+# define MAX_DIR_VIS_TIME 1600
 # define DEF_AMBIENT 0.1
 # define DEF_DIFFUSE 0.9
 # define DEF_SPECULAR 0.9
@@ -64,6 +64,9 @@ typedef struct s_material t_material;
 typedef struct s_image t_image;
 typedef struct s_word t_word;
 typedef	struct s_thread_data t_thread_data;
+typedef	struct s_camera t_camera;
+
+
 
 
 
@@ -97,6 +100,16 @@ typedef struct s_tuple
 	float	z;
 	short	id;
 }	tuple;
+
+typedef	struct	s_camera
+{
+	float	fov;
+	float	aspect;
+	float	half_width;
+	float	half_height;
+	float	pixel_size;
+	float	**transform;
+}	t_camera;
 
 typedef struct s_sphere
 {
@@ -159,7 +172,7 @@ typedef	struct	s_word
 	tuple		*normal ;
 	tuple		*eye_vec;
 	tuple		*tmp;
-
+	bool		inside;
 }	t_word;
 
 
@@ -215,6 +228,7 @@ void	print_tuple(tuple *t);
 void	free_intersections(t_intersect *i);
 void	print_spheres(t_sphere *s);
 void	f_swap(float *f1,float *f2);
+bool	is_inside(tuple **n, tuple *e_v);
 
 // TUPLES
 void	*tuples_operation(tuple *t1, tuple *t2, int operation);
@@ -273,5 +287,9 @@ t_material	*material(float ambient, float diffuse, float specular, float shinine
 t_light		*new_light();
 int			lighting(t_material *m, t_light *l, tuple *it_point, tuple	*eye_v,tuple *normal);
 
+
+// CAMERA
+
+float		**view_transform(tuple *from, tuple *to, tuple *up);
 
 #endif

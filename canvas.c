@@ -2,7 +2,7 @@
 
 // INITING MUTEX FOR ONE AT ONCE ACCESING SAME MEMORY
 
-void render(t_word	**word);
+void render(t_word	**word,int f);
 void	black_image(t_image *img);
 
 int	close(int s)
@@ -49,80 +49,80 @@ int	key_hook(int key, void *param)
 	{
 		black_image((*word)->canvas->image);
 		(*word)->eye_pos->y -= 0.5;
-		render(word);
+		render(word,1);
 	}
-	if (key == DOWN)
-	{
-		black_image((*word)->canvas->image);
-		(*word)->eye_pos->y += 0.5;
-		render(word);
-	}
-	if (key == LEFT)
-	{
-		black_image((*word)->canvas->image);
-		(*word)->eye_pos->x += 0.5;
-		render(word);
-	}
-	if (key == RIGHT)
-	{
-		black_image((*word)->canvas->image);
-		(*word)->eye_pos->x -= 0.5;
-		render(word);
-	}
-	if (key == 65451)
-	{
-		black_image((*word)->canvas->image);
-		(*word)->eye_pos->z += 0.5;
-		render(word);
-	}
-	if (key == 65453)
-	{
-		black_image((*word)->canvas->image);
-		(*word)->eye_pos->z -= 0.5;
-		render(word);
-	}
-	if (key == ROT_UP_X)
-	{
-		black_image((*word)->canvas->image);
-		rotate_x(word, 0.1);
-		render(word);
-	}
-	if (key == ROT_DOWN_X)
-	{
-		black_image((*word)->canvas->image);
-		rotate_x(word, -0.1);
-		render(word);
-	}
-	if (key == ROT_UP_Y)
-	{
-		black_image((*word)->canvas->image);
-		rotate_y(word, 0.1);
-		render(word);
-	}
-	if (key == ROT_DOWN_Y)
-	{
-		black_image((*word)->canvas->image);
-		rotate_y(word, -0.1);
-		render(word);
-	}
-	if (key == ROT_UP_Z)
-	{
-		black_image((*word)->canvas->image);
-		rotate_z(word, 0.1);
-		render(word);
-	}
-	if (key == ROT_DOWN_Z)
-	{
-		black_image((*word)->canvas->image);
-		rotate_z(word, -0.1);
-		render(word);
-	}
+	// if (key == DOWN)
+	// {
+		// black_image((*word)->canvas->image);
+		// (*word)->eye_pos->y += 0.5;
+		// render(word,1);
+	// }
+	// if (key == LEFT)
+	// {
+		// black_image((*word)->canvas->image);
+		// (*word)->eye_pos->x += 0.5;
+		// render(word,1);
+	// }
+	// if (key == RIGHT)
+	// {
+		// black_image((*word)->canvas->image);
+		// (*word)->eye_pos->x -= 0.5;
+		// render(word,1);
+	// }
+	// if (key == 65451)
+	// {
+		// black_image((*word)->canvas->image);
+		// (*word)->eye_pos->z += 0.5;
+		// render(word,1);
+	// }
+	// if (key == 65453)
+	// {
+		// black_image((*word)->canvas->image);
+		// (*word)->eye_pos->z -= 0.5;
+		// render(word,1);
+	// }
+	// if (key == ROT_UP_X)
+	// {
+		// black_image((*word)->canvas->image);
+		// rotate_x(word, 0.1);
+		// render(word,1);
+	// }
+	// if (key == ROT_DOWN_X)
+	// {
+		// black_image((*word)->canvas->image);
+		// rotate_x(word, -0.1);
+		// render(word,1);
+	// }
+	// if (key == ROT_UP_Y)
+	// {
+		// black_image((*word)->canvas->image);
+		// rotate_y(word, 0.1);
+		// render(word,1);
+	// }
+	// if (key == ROT_DOWN_Y)
+	// {
+		// black_image((*word)->canvas->image);
+		// rotate_y(word, -0.1);
+		// render(word,1);
+	// }
+	// if (key == ROT_UP_Z)
+	// {
+		// black_image((*word)->canvas->image);
+		// rotate_z(word, 0.1);
+		// render(word,1);
+	// }
+	// if (key == ROT_DOWN_Z)
+	// {
+		// black_image((*word)->canvas->image);
+		// rotate_z(word, -0.1);
+		// render(word,1);
+	// }
 	if (key == 114){
 		black_image((*word)->canvas->image);
 		(*word)->eye_pos->x = 0;
 		(*word)->eye_pos->y = 0;
 		(*word)->eye_pos->z = -8;
-		render(word);
+		render(word,1);
 	}
 	mlx_put_image_to_window((*word)->canvas->mlx,(*word)->canvas->win,(*word)->canvas->image->img_ptr,0,0);
 }
@@ -194,8 +194,38 @@ int loop_hook(void *param)
 	mlx_put_image_to_window((*word)->canvas->mlx,(*word)->canvas->win,(*word)->canvas->image->img_ptr,0,0);
 }
 
+void	color_at(void	**w, int i, int j)
+{
+	t_word **word = (t_word **)w;
+	
+	(*word)->w_x = -5 + (*word)->pixel_size * j;
+	(*word)->tmp = point((*word)->w_x,(*word)->w_y,(*word)->w_z);
+	(*word)->ray_dir = tuple_operation((*word)->tmp,NORM,0);
+	free((*word)->tmp);
+	(*word)->ray = new_ray((*word)->eye_pos,(*word)->ray_dir);
+	(*word)->intersects = get_sphere_intersections((*word)->spheres,(*word)->ray);
+	(*word)->hit = find_hit((*word)->intersects);
+		
+	if ((*word)->hit) {
+		(*word)->it_pos = position((*word)->ray,(*word)->hit->times[0]);
+		(*word)->normal = normal_at((*word)->spheres,(*word)->it_pos);
+		(*word)->eye_vec = tuple_operation((*word)->ray->direction,MUL,-1);
+		(*word)->color = lighting((*word)->hit->s->m,(*word)->light,(*word)->it_pos,(*word)->eye_vec,(*word)->normal);
+		(*word)->inside = is_inside(&(*word)->normal,(*word)->eye_vec);
 
-void	render(t_word	**word)
+		put_square(i,j,(*word)->canvas->image,(*word)->color);
+		free((*word)->it_pos);
+		free((*word)->normal);
+		free((*word)->eye_vec);
+	}
+
+	free_intersections((*word)->intersects);
+	free((*word)->ray->direction);
+	free((*word)->ray);
+}
+
+
+void	render(t_word	**word,int f)
 {
 	(*word)->wall_size = 10.0;
 	(*word)->pixel_size = 10.0 / 1000;
@@ -203,71 +233,38 @@ void	render(t_word	**word)
 	(*word)->w_y = 0;
 	(*word)->w_z = 14;
 
-
-	(*word)->spheres = new_sphere(1);
-	(*word)->spheres->m = material(0.9,0,0,0);
-	(*word)->spheres->m->color = point(255,0,0);
-	set_transform(&(*word)->spheres,new_scale(10,0.01,10),SCALE);
-	(*word)->light = new_light();
-
-	(*word)->spheres->next = new_sphere(2);
-	(*word)->spheres->next->m = material(0.1,0.9,0.9,20);
-	(*word)->spheres->next->m->color = point(255,0,0);
-	set_transform(&(*word)->spheres->next,new_translation(0,0,5),SCALE);
-	set_transform(&(*word)->spheres->next,new_rotation_y(PI/4),ROT);
-	set_transform(&(*word)->spheres->next,new_rotation_x(PI/2),ROT);
-	set_transform(&(*word)->spheres->next,new_scale(10,10,0.01),SCALE);
+	if (!f)
+	{
+		(*word)->spheres = new_sphere(1);
+		(*word)->spheres->m = material(0.2,0.9,0.9,100);
+		(*word)->spheres->m->color = point(255,0,255);
+		(*word)->light = new_light();
+		(*word)->light->pos = point(-10,10,-10);
+		(*word)->light->intens = point(1,1,1);
 
 
-	(*word)->spheres->next->next = NULL;
+		// (*word)->spheres->next = new_sphere(2);
+		// (*word)->spheres->next->m = material(0.2,0.9,0.9,100);
+		// set_transform(&(*word)->spheres->next,new_translation(-0.4,0.2,-2),TRSL);
+		// set_transform(&(*word)->spheres->next,new_scale(0.5,0.5,0.5),SCALE);
+		// (*word)->spheres->next->m->color = point(255,0,255);
+	}
+
 	if (!(*word)->eye_pos)
-		(*word)->eye_pos = point(0,0,-8);
-	
-
-	(*word)->light->pos = point(-4,2,-10);
-	(*word)->light->intens = point(1,1,1);
-	
+		(*word)->eye_pos = point(0,0,-4);
 	for (int i = 0; i<1000; i+=SMOOTHENESS)
 	{
 		(*word)->w_y = 5 - (*word)->pixel_size * i;
 		for (int j = 0; j < 1000; j+=SMOOTHENESS)
-		{
-			(*word)->w_x = -5 + (*word)->pixel_size * j;
-
-
-			(*word)->tmp = point((*word)->w_x,(*word)->w_y,(*word)->w_z);
-			(*word)->ray_dir = tuple_operation((*word)->tmp,NORM,0);
-			
-			free((*word)->tmp);
-			(*word)->ray = new_ray((*word)->eye_pos,(*word)->ray_dir);
-			
-			(*word)->intersects = get_sphere_intersections((*word)->spheres,(*word)->ray);
-			(*word)->hit = find_hit((*word)->intersects);
-
-			
-			if ((*word)->hit)
-			{
-				
-				(*word)->it_pos = position((*word)->ray,(*word)->hit->times[0]);
-				(*word)->normal = normal_at((*word)->spheres,(*word)->it_pos);
-				(*word)->eye_vec = tuple_operation((*word)->ray->direction,MUL,-1);
-				(*word)->color = lighting((*word)->spheres->m,(*word)->light,(*word)->it_pos,(*word)->eye_vec,(*word)->normal);
-				
-				put_square(i,j,(*word)->canvas->image,(*word)->color);
-				free((*word)->it_pos);
-				free((*word)->normal);
-				free((*word)->eye_vec);
-			}
-			free_intersections((*word)->intersects);
-			free((*word)->ray->direction);
-			free((*word)->ray);
-		}
+			color_at((void **)word,i,j);
 	}
-	free((*word)->light->intens);
-	free((*word)->light->pos);
-	free((*word)->light);
-	// free((*word)->eye_pos);
-	free_spheres((*word)->spheres);
+	if (f == 3)
+	{
+		free_spheres((*word)->spheres);
+		free((*word)->light->pos);
+		free((*word)->light->intens);
+		free((*word)->light);
+	}
 }
 
 
@@ -285,7 +282,7 @@ void	init_canvas(t_canvas *canvas)
 	canvas->mlx = mlx_init();
 	canvas->win = mlx_new_window(canvas->mlx,1000,1000, "Minirt");
 	init_image(&canvas->image, canvas->mlx);
-	render(&word);
+	render(&word,0);
 	mlx_put_image_to_window(canvas->mlx,canvas->win,canvas->image->img_ptr,0,0);
 	mlx_hook(canvas->win,17,0,close,NULL);
 	mlx_key_hook(canvas->win,key_hook,&word);
